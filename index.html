@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSEL DIGITAL — Plataforma Integrada de Gestão | NOVACAP</title>
+<style>
+:root{
+  /* Identidade institucional */
+  --novacap:#0050B3;        /* Azul NOVACAP */
+  --novacap-dark:#003C87;
+  --novacap-light:#E8F1FC;
+  --funap-navy:#0D1C41;     /* Azul marinho FUNAP */
+  --funap-gold:#F2AF1E;     /* Amarelo ouro FUNAP */
+  --df-green:#008033;       /* Verde bandeira DF */
+  --df-gold:#FFD700;
+  --danger:#C0392B;
+  --warn:#B87500;
+  --ink:#16203A;
+  --muted:#5B6B86;
+  --line:#D8E1EE;
+  --bg:#F4F7FB;
+  --white:#fff;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(13,28,65,.10),0 6px 20px rgba(13,28,65,.06);
+  --sidebar:264px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+a{color:var(--novacap)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ---------- Login ---------- */
+#login{position:fixed;inset:0;background:linear-gradient(150deg,var(--funap-navy) 0%,#123B7A 55%,var(--novacap) 100%);display:flex;align-items:center;justify-content:center;padding:24px;z-index:200}
+.login-card{background:var(--white);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);width:100%;max-width:920px;display:grid;grid-template-columns:1.05fr .95fr;overflow:hidden}
+.login-brand{background:var(--funap-navy);color:#fff;padding:36px 34px;display:flex;flex-direction:column;gap:18px}
+.login-brand h1{font-size:26px;margin:6px 0 0;letter-spacing:.5px}
+.login-brand h1 span{color:var(--funap-gold)}
+.login-brand p{color:#C9D6EC;font-size:13px;margin:0}
+.login-brand .bar{height:4px;width:74px;background:var(--funap-gold);border-radius:3px}
+.login-brand ul{margin:8px 0 0;padding-left:18px;color:#C9D6EC;font-size:12.5px}
+.login-form{padding:36px 34px}
+.login-form h2{margin:0 0 4px;font-size:19px}
+.login-form .hint{color:var(--muted);font-size:12.5px;margin:0 0 20px}
+.brand-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.crest{display:block;height:auto}
+.logo-crest{display:block;height:auto}
+.crest-img{display:block;height:auto;margin:0 auto}
+.badge-inst{font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:#9FB4D6}
+
+/* ---------- Layout ---------- */
+#app{display:none;min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 18px;z-index:60}
+.topbar .logo{display:flex;align-items:center;gap:10px;min-width:220px}
+.topbar .logo b{color:var(--funap-navy);font-size:16px;letter-spacing:.6px}
+.topbar .logo b i{color:var(--novacap);font-style:normal}
+.topbar .ctx{color:var(--muted);font-size:12.5px;border-left:1px solid var(--line);padding-left:14px}
+.topbar .spacer{flex:1}
+.userchip{display:flex;align-items:center;gap:9px;background:var(--novacap-light);border:1px solid #CFE0F6;border-radius:999px;padding:5px 12px 5px 5px}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--novacap);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.userchip small{display:block;color:var(--muted);font-size:11px;line-height:1.1}
+.userchip strong{font-size:12.5px}
+
+.sidebar{position:fixed;top:60px;bottom:0;left:0;width:var(--sidebar);background:var(--funap-navy);overflow-y:auto;padding:14px 0 30px;z-index:50}
+.sidebar .group{color:#7E93B8;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;padding:16px 20px 7px}
+.navbtn{width:100%;background:none;border:0;color:#D7E2F5;text-align:left;padding:9px 18px;display:flex;align-items:center;gap:11px;cursor:pointer;border-left:3px solid transparent}
+.navbtn:hover{background:rgba(255,255,255,.07);color:#fff}
+.navbtn.active{background:rgba(242,175,30,.14);color:#fff;border-left-color:var(--funap-gold);font-weight:600}
+.navbtn svg{flex:0 0 17px;opacity:.9}
+.navbtn .count{margin-left:auto;background:rgba(255,255,255,.14);border-radius:999px;font-size:11px;padding:1px 7px}
+.sidebar .foot{color:#6E82A8;font-size:11px;padding:18px 20px 0;line-height:1.5}
+
+main{margin-left:var(--sidebar);padding:80px 26px 60px}
+.page-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.page-head h2{margin:0;font-size:21px;color:var(--funap-navy)}
+.page-head p{margin:3px 0 0;color:var(--muted);font-size:13px;max-width:760px}
+.page-head .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Componentes ---------- */
+.btn{border:1px solid transparent;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:7px}
+.btn-primary{background:var(--novacap);color:#fff}
+.btn-primary:hover{background:var(--novacap-dark)}
+.btn-ghost{background:var(--white);color:var(--novacap);border-color:#BFD4F0}
+.btn-ghost:hover{background:var(--novacap-light)}
+.btn-gold{background:var(--funap-gold);color:#3A2A00}
+.btn-gold:hover{filter:brightness(.95)}
+.btn-danger{background:#fff;color:var(--danger);border-color:#EBC3BE}
+.btn-danger:hover{background:#FDF1EF}
+.btn-sm{padding:5px 10px;font-size:12.5px;border-radius:7px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+.card-pad{padding:18px}
+.card h3{margin:0 0 12px;font-size:15px;color:var(--funap-navy)}
+.card h3 small{font-weight:400;color:var(--muted);font-size:12px}
+.grid{display:grid;gap:16px;min-width:0}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1180px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3,.g2{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){:root{--sidebar:0px}.sidebar{transform:translateX(-100%);transition:.2s}.sidebar.open{transform:none;width:264px}main{padding:78px 14px 50px}.g4{grid-template-columns:minmax(0,1fr)}.login-card{grid-template-columns:1fr}.login-brand{display:none}}
+
+.kpi{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow);border-top:3px solid var(--novacap)}
+.kpi.gold{border-top-color:var(--funap-gold)}
+.kpi.green{border-top-color:var(--df-green)}
+.kpi.red{border-top-color:var(--danger)}
+.kpi .lbl{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.7px}
+.kpi .val{font-size:27px;font-weight:700;color:var(--funap-navy);line-height:1.2}
+.kpi .sub{font-size:12px;color:var(--muted)}
+
+table{width:100%;border-collapse:collapse}
+thead th{background:#F7FAFE;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:10px 12px;border-bottom:1px solid #EEF3F9;vertical-align:middle}
+tbody tr:hover{background:#FAFCFF}
+.table-wrap{overflow-x:auto;max-width:100%}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px;border-bottom:1px solid var(--line);background:#FCFDFF;border-radius:var(--radius) var(--radius) 0 0}
+.toolbar input[type=search],.toolbar select,.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+.toolbar input[type=search]{min-width:240px}
+.toolbar .right{margin-left:auto;display:flex;gap:8px}
+
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid}
+.t-blue{background:var(--novacap-light);color:var(--novacap-dark);border-color:#CADFF9}
+.t-green{background:#E6F6EC;color:#0A6B31;border-color:#BEE6CC}
+.t-gold{background:#FDF3DC;color:#8A5D00;border-color:#F2DFAE}
+.t-red{background:#FBEBE8;color:#9C2A1C;border-color:#F1CFC9}
+.t-gray{background:#F1F4F9;color:#4E5C75;border-color:#DEE5EF}
+
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%}
+.field textarea{min-height:78px;resize:vertical}
+.field .help{font-size:11.5px;color:var(--muted);margin-top:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.form-grid .full{grid-column:1/-1}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+
+.modal-bd{position:fixed;inset:0;background:rgba(13,28,65,.55);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:120}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:720px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.modal.wide{max-width:940px}
+.modal-h{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal-h h3{margin:0;font-size:16px;color:var(--funap-navy)}
+.modal-h button{margin-left:auto;background:none;border:0;font-size:22px;line-height:1;color:var(--muted);cursor:pointer}
+.modal-b{padding:20px}
+.modal-f{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;background:#FCFDFF;border-radius:0 0 12px 12px}
+
+.toast-wrap{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:8px;z-index:300}
+.toast{background:var(--funap-navy);color:#fff;padding:11px 16px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.28);font-size:13px;border-left:4px solid var(--funap-gold);max-width:340px}
+.toast.ok{border-left-color:var(--df-green)}
+.toast.err{border-left-color:var(--danger)}
+
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:10px;font-size:12.5px}
+.bar{height:9px;background:#EDF2F9;border-radius:6px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--novacap);border-radius:6px}
+.bar.gold span{background:var(--funap-gold)}
+.bar.green span{background:var(--df-green)}
+.bar.red span{background:var(--danger)}
+
+.alert-list{display:flex;flex-direction:column;gap:9px}
+.alert-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--funap-gold);border-radius:8px;background:#FFFDF7}
+.alert-item.red{border-left-color:var(--danger);background:#FEF7F6}
+.alert-item.blue{border-left-color:var(--novacap);background:#F7FAFF}
+.alert-item b{font-size:13px}
+.alert-item p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+
+.check{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:#fff}
+.check input{margin-top:3px;width:16px;height:16px;accent-color:var(--novacap)}
+.check.done{background:#F4FBF6;border-color:#CDE9D7}
+.check label{font-size:13px;cursor:pointer}
+.check .meta{font-size:11.5px;color:var(--muted)}
+.progress{height:8px;background:#EDF2F9;border-radius:6px;overflow:hidden;margin:6px 0 14px}
+.progress span{display:block;height:100%;background:var(--df-green)}
+
+.steps{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.step{background:var(--novacap-light);border:1px solid #CFE0F6;color:var(--novacap-dark);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600}
+.step .n{background:var(--novacap);color:#fff;border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;margin-right:6px}
+
+.qr{width:184px;height:184px;display:grid;grid-template-columns:repeat(21,1fr);grid-template-rows:repeat(21,1fr);border:8px solid #fff;box-shadow:0 0 0 1px var(--line);background:#fff}
+.qr i{background:var(--funap-navy)}
+.mono{font-family:"Consolas","SF Mono",Menlo,monospace}
+.token{font-size:20px;letter-spacing:3px;font-weight:700;color:var(--funap-navy)}
+
+.doc-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto}
+.doc-item{border:1px solid var(--line);border-radius:8px;padding:11px 12px;cursor:pointer;background:#fff}
+.doc-item:hover{border-color:var(--novacap);background:#F8FBFF}
+.doc-item.sel{border-color:var(--novacap);background:var(--novacap-light)}
+.doc-item b{font-size:13px;display:block}
+.doc-item small{color:var(--muted)}
+
+#docPaper{background:#fff;border:1px solid var(--line);border-radius:8px;padding:34px 38px;min-height:520px;font-family:Georgia,"Times New Roman",serif;color:#1B2438}
+#docPaper .dh{text-align:center;border-bottom:2px solid var(--novacap);padding-bottom:12px;margin-bottom:20px}
+#docPaper .dh .org{font-family:"Segoe UI",Arial,sans-serif;font-size:12px;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase}
+#docPaper .dh h4{margin:8px 0 2px;font-size:17px;color:var(--funap-navy);text-transform:uppercase;letter-spacing:.6px}
+#docPaper h5{font-family:"Segoe UI",Arial,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--novacap);margin:22px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+#docPaper table{font-size:13px}
+#docPaper{overflow-x:auto}
+.doc-grid{grid-template-columns:300px minmax(0,1fr)}
+@media(max-width:900px){.doc-grid{grid-template-columns:minmax(0,1fr)}#docPaper{padding:22px 16px}.doc-list{max-height:260px}}
+#docPaper td,#docPaper th{border:1px solid #D6DEEA;padding:7px 9px;font-family:"Segoe UI",Arial,sans-serif}
+#docPaper .sign{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:56px;text-align:center;font-size:12.5px}
+#docPaper .sign div{border-top:1px solid #6B7A96;padding-top:6px}
+.watermark{text-align:center;color:#9AA8BF;font-size:11px;margin-top:26px;font-family:"Segoe UI",Arial,sans-serif}
+
+/* ===== Folha de Frequência Individual (FUNAP) — réplica do modelo oficial ===== */
+#docPaper.paper-folha{padding:26px 28px;font-family:Arial,Helvetica,sans-serif;color:#000}
+.folha{max-width:800px;margin:0 auto;color:#000}
+.folha table{width:100%;border-collapse:collapse;table-layout:fixed}
+.f-top{display:grid;grid-template-columns:58px 1fr;align-items:center;gap:8px}
+.f-crest{text-align:center}
+.f-org{text-align:center;font-size:10.5px;font-weight:400;line-height:1.45;text-transform:uppercase;letter-spacing:.3px;padding-right:58px}
+
+/* faixa SETOR: NIVEL II + numero do setor (unica cor da folha) */
+.f-setor{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.f-setor .lbl{font-weight:400}
+.f-setor .num{border:1px solid #000;background:#FFE680;font-weight:700;font-size:11.5px;padding:1px 12px;letter-spacing:.5px}
+
+/* moldura externa que envolve todo o corpo do documento */
+.f-frame{border:1.4px solid #000;padding:5px 6px 8px}
+.f-title{text-align:center;font-size:14px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;padding:3px 0 6px}
+.f-id{display:grid;grid-template-columns:44% 28% 28%;font-size:10px;text-transform:uppercase;line-height:1.5;white-space:nowrap;overflow:hidden}
+.f-id span{overflow:hidden;text-overflow:ellipsis;padding-right:6px}
+.f-id i{font-style:normal;font-weight:700;font-size:9px;letter-spacing:.3px;margin-right:3px}
+
+.folha .f-doc{border:1px solid #000;margin-top:6px}
+#docPaper.paper-folha .f-doc{border:1px solid #000}
+#docPaper.paper-folha .f-doc th,#docPaper.paper-folha .f-doc td{border:1px solid #000;color:#000}
+#docPaper.paper-folha .f-anot .box{border:1px solid #000}
+#docPaper.paper-folha .f-setor .num{border:1px solid #000}
+#docPaper.paper-folha .f-frame{border:1.4px solid #000}
+#docPaper.paper-folha .f-sign span{border-top:1px solid #000}
+.folha .f-doc col.c-dia{width:4.3%}
+.folha .f-doc col.c-hr{width:7.5%}
+.folha .f-doc col.c-as{width:16.4%}
+.folha .f-doc th,.folha .f-doc td{border:1px solid #000;padding:2px 3px;font-size:10px;text-align:center;font-family:Arial,sans-serif;height:23px;overflow:hidden}
+.folha .f-doc tr.r-per th,.folha .f-doc tr.r-sub th{font-weight:700;text-transform:uppercase}
+.folha .f-doc tr.r-per th{font-size:10px;letter-spacing:.4px}
+.folha .f-doc tr.r-sub th{font-size:8.5px;letter-spacing:.2px;height:auto;padding:2px}
+.folha .f-doc th.dia{font-size:10px}
+.folha .f-doc td.dia{font-weight:700;font-size:10.5px}
+.folha .f-doc td.dia small{display:block;font-size:7.5px;font-weight:400;color:#444;letter-spacing:.4px}
+.folha .f-doc td.hr{font-size:9.5px}
+.folha .f-doc td.blk{font-size:9.5px;font-weight:700;letter-spacing:1.4px}
+.folha .f-doc tr.nl td{background:#E6E6E6}
+.folha .f-doc tr.fer td{background:#EDEDED}
+.folha .f-doc tr.falta td.blk{background:#F4F4F4}
+.folha .f-doc tr.justif td.blk{background:#F4F4F4}
+
+/* totais em linha unica, sem separadores */
+.f-tot{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:5px;font-size:9.5px;line-height:1.4}
+.f-tot span{white-space:nowrap}
+.f-tot b{font-size:10px}
+.f-obs{margin-top:7px;font-size:9.5px;line-height:1.45;text-align:justify}
+.f-anot{margin-top:8px}
+.f-anot .cap{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.f-anot .box{border:1px solid #000;min-height:48px;padding:6px 8px;font-size:10px;white-space:pre-wrap}
+.f-sign{display:grid;grid-template-columns:41.2% 58.8%;margin-top:38px;font-size:10px;text-transform:uppercase;letter-spacing:.6px}
+.f-sign span{display:block;border-top:1px solid #000;padding-top:5px;text-align:center}
+.f-sign .s1 span{width:63%}
+.f-sign .s2 span{width:55%}
+.f-foot{text-align:center;font-size:9.5px;font-weight:700;letter-spacing:1.4px;margin-top:12px}
+@media(max-width:900px){.folha .f-doc th,.folha .f-doc td{font-size:8.5px;padding:2px}.folha .f-doc tr.r-sub th{font-size:6.6px}.f-id{grid-template-columns:1fr;white-space:normal}.f-tot{flex-wrap:wrap;justify-content:flex-start;gap:4px 14px}}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;cursor:pointer;color:var(--muted);font-weight:600}
+.tab.active{color:var(--novacap);border-bottom-color:var(--novacap)}
+.note{background:var(--novacap-light);border:1px solid #CFE0F6;border-left:4px solid var(--novacap);border-radius:8px;padding:12px 14px;font-size:12.5px;color:#22406E}
+.note.gold{background:#FFFBF0;border-color:#F3E3B8;border-left-color:var(--funap-gold);color:#6B4E00}
+
+@page{size:A4 portrait;margin:6mm 9mm}
+@media print{
+  .topbar,.sidebar,.page-head,.toolbar,.no-print,.toast-wrap{display:none!important}
+  main{margin:0;padding:0}
+  body{background:#fff}
+  #docPaper{border:0;padding:0}
+  #docPaper.paper-folha{padding:0}
+  .card{border:0;box-shadow:none}
+  #docPaper,#docPaper .card,.card.card-pad{padding:0!important;margin:0!important;background:#fff}
+  .doc-grid{display:block!important;gap:0!important}
+  .folha{max-width:none;font-size:8.4pt}
+  .f-top{gap:8px;grid-template-columns:58px 1fr}
+  .f-org{font-size:8pt;line-height:1.3;padding-right:58px;letter-spacing:0}
+  .f-setor{font-size:7.8pt;margin:5px 0 3px;gap:8px}
+  .f-setor .num{font-size:9pt;padding:1px 10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #docPaper .folha .f-frame{border:1.2pt solid #000;padding:3px 4px 5px}
+  #docPaper .folha .f-title{font-size:11.6pt;padding:2px 0 4px;letter-spacing:1.1pt}
+  #docPaper .folha .f-id{font-size:7.9pt;line-height:1.35}
+  #docPaper .folha .f-id i{font-size:7pt}
+  #docPaper .folha .f-doc{border:0.9pt solid #000;margin-top:4px}
+  #docPaper .folha .f-doc th,#docPaper .folha .f-doc td{border:0.75pt solid #000;color:#000;height:auto;padding:1.5px 3px;font-size:8.4pt;line-height:1.2}
+  #docPaper .folha .f-doc tbody td{height:5.4mm;padding:0 2px}
+  #docPaper .folha .f-doc td.dia small{font-size:6.4pt;display:inline;margin-left:3px;color:#000}
+  #docPaper .folha .f-doc tr.r-per th{font-size:8.1pt;padding:2.2px 3px}
+  #docPaper .folha .f-doc tr.r-sub th{font-size:6.5pt;padding:1.6px 2px}
+  .folha .f-doc tr.nl td,.folha .f-doc tr.fer td,.folha .f-doc tr.falta td.blk,.folha .f-doc tr.justif td.blk{-webkit-print-color-adjust:exact;print-color-adjust:exact;background-clip:padding-box}
+  .folha .f-doc tr,.f-obs,.f-anot,.f-sign,.f-top,.f-setor,.f-tot{page-break-inside:avoid}
+  .folha .f-doc thead{display:table-header-group}
+  .f-tot{font-size:7.4pt;margin-top:4px;gap:4px}
+  .f-tot b{font-size:8pt}
+  .f-obs{font-size:7.3pt;line-height:1.28;margin-top:5px}
+  .f-anot{margin-top:5px}
+  .f-anot .cap{font-size:7pt;margin-bottom:2px}
+  .f-anot .box{min-height:20px;font-size:7.8pt;padding:3px 5px;border:0.75pt solid #000}
+  .f-sign{margin-top:13px;font-size:7.8pt}
+  .f-sign span{padding-top:3px;border-top:0.75pt solid #000}
+  .f-foot{font-size:7.6pt;margin-top:7px;letter-spacing:1pt}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-row">
+        <img data-brasao class="crest" width="40" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Brasão do Distrito Federal">
+        <div>
+          <div class="badge-inst">Governo do Distrito Federal</div>
+          <div class="badge-inst" style="color:#F2AF1E">NOVACAP &middot; DSEL</div>
+        </div>
+      </div>
+      <div class="bar"></div>
+      <h1>DSEL <span>DIGITAL</span></h1>
+      <p>Plataforma Integrada de Gest&atilde;o da Divis&atilde;o de Seguran&ccedil;a e Limpeza.</p>
+      <ul>
+        <li>Pessoas, reeducandos e frequ&ecirc;ncia</li>
+        <li>Cart&otilde;es, estoque e desligamentos</li>
+        <li>Contratos, ocorr&ecirc;ncias e CFTV</li>
+        <li>Central de documentos e auditoria</li>
+      </ul>
+      <p style="margin-top:auto;font-size:11px;color:#8EA4C8">Prot&oacute;tipo conceitual &mdash; vers&atilde;o 1.0. Dados fict&iacute;cios.</p>
+    </div>
+    <form class="login-form" id="loginForm">
+      <h2>Acesso ao sistema</h2>
+      <p class="hint">Ambiente de demonstra&ccedil;&atilde;o. Selecione um perfil para entrar &mdash; nenhuma senha real &eacute; validada e nenhum dado sai deste navegador.</p>
+      <div class="field">
+        <label for="lgUser">Usu&aacute;rio / matr&iacute;cula</label>
+        <input id="lgUser" value="servidor.dsel" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="lgPerfil">Perfil de acesso</label>
+        <select id="lgPerfil">
+          <option value="Administrador">Administrador &mdash; acesso total</option>
+          <option value="Gestor DSEL" selected>Gestor DSEL &mdash; opera&ccedil;&atilde;o e relat&oacute;rios</option>
+          <option value="Operador">Operador &mdash; cadastros e frequ&ecirc;ncia</option>
+          <option value="CFTV">CFTV &mdash; acesso segregado</option>
+          <option value="Consulta">Consulta &mdash; somente leitura</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="lgSenha">Senha</label>
+        <input id="lgSenha" type="password" value="demo" autocomplete="current-password">
+        <div class="help">Em produ&ccedil;&atilde;o: autentica&ccedil;&atilde;o corporativa, HTTPS e menor privil&eacute;gio (item 15 do documento).</div>
+      </div>
+      <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center;margin-top:6px">Entrar na plataforma</button>
+      <p class="hint" style="margin-top:14px;text-align:center">Perfis com restri&ccedil;&atilde;o t&ecirc;m a&ccedil;&otilde;es bloqueadas e registradas em auditoria.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app">
+  <header class="topbar">
+    <button class="btn btn-ghost btn-sm no-print" id="menuToggle" aria-label="Abrir menu" style="display:none">&#9776;</button>
+    <div class="logo">
+      <img data-brasao class="logo-crest" width="24" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Brasão do Distrito Federal">
+      <b>DSEL <i>DIGITAL</i></b>
+    </div>
+    <div class="ctx">NOVACAP &mdash; Divis&atilde;o de Seguran&ccedil;a e Limpeza</div>
+    <div class="spacer"></div>
+    <span class="tag t-gold no-print">Ambiente de demonstra&ccedil;&atilde;o</span>
+    <div class="userchip">
+      <span class="avatar" id="uAvatar">SD</span>
+      <span><strong id="uName">servidor.dsel</strong><small id="uRole">Gestor DSEL</small></span>
+    </div>
+    <button class="btn btn-ghost btn-sm no-print" id="btnLogout">Sair</button>
+  </header>
+
+  <nav class="sidebar" id="sidebar" aria-label="Menu de m&oacute;dulos"></nav>
+  <main id="view"></main>
+</div>
+
+<div class="toast-wrap" id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* =========================================================
+   DSEL DIGITAL - protótipo funcional (dados fictícios)
+   Persistência local (localStorage), sem envio externo.
+   ========================================================= */
+'use strict';
+
+const STORE_KEY = 'dsel_digital_v1';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = p => p + '-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+const hoje = () => new Date().toISOString().slice(0, 10);
+const brDate = d => { if(!d) return '—'; const [a,m,g] = d.split('-'); return g ? `${g}/${m}/${a}` : d; };
+const nowStamp = () => new Date().toLocaleString('pt-BR');
+const money = v => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+/* ---------------- Brasão oficial (imagem fornecida, embutida em base64) ---------------- */
+const BRASAO_DF_URI = 'data:image/png;base64,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';
+function brasaoImg(w, cls){
+  const larg = w || 38;
+  return '<img src="' + BRASAO_DF_URI + '" width="' + larg + '" alt="Brasão do Distrito Federal" class="' + (cls||'') + '">';
+}
+
+const initials = n => String(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+/* ---------------- Estado inicial (seed fictício) ---------------- */
+function seed(){
+  return {
+    perfil: 'Gestor DSEL',
+    usuario: 'servidor.dsel',
+    param: { valorCartao: 50, tolerancia: 10 },
+    pessoas: [
+      {id:'PES-0001', nome:'Ana Clara Ribeiro', cpf:'012.345.678-90', nasc:'1988-04-12', tipo:'Servidor', matricula:'NC-22841', escolaridade:'Superior completo', lotacao:'DSEL / Administrativo', situacao:'Ativo', tel:'(61) 98111-2233', foto:false, criado:'2026-02-10'},
+      {id:'PES-0002', nome:'Marcos Vinícius Alves', cpf:'123.456.789-01', nasc:'1979-11-03', tipo:'Servidor', matricula:'NC-19077', escolaridade:'Médio completo', lotacao:'DSEL / Segurança', situacao:'Ativo', tel:'(61) 98222-3344', foto:true, criado:'2026-02-11'},
+      {id:'PES-0003', nome:'Joel Pereira dos Santos', cpf:'234.567.890-12', nasc:'1992-06-25', tipo:'Reeducando', matricula:'FN-30412', escolaridade:'Fundamental completo', lotacao:'DSEL / Limpeza', situacao:'Ativo', tel:'—', foto:true, criado:'2026-03-02'},
+      {id:'PES-0004', nome:'Rogério Lima Barbosa', cpf:'345.678.901-23', nasc:'1985-01-30', tipo:'Reeducando', matricula:'FN-30455', escolaridade:'Médio incompleto', lotacao:'DSEL / Jardinagem', situacao:'Ativo', tel:'—', foto:false, criado:'2026-03-14'},
+      {id:'PES-0005', nome:'Silvana Costa Moreira', cpf:'456.789.012-34', nasc:'1990-09-17', tipo:'Terceirizado', matricula:'TC-7781', escolaridade:'Médio completo', lotacao:'Contrato 014/2025 — Limpeza', situacao:'Ativo', tel:'(61) 98555-1212', foto:false, criado:'2026-01-20'},
+      {id:'PES-0006', nome:'Everton Sousa Machado', cpf:'567.890.123-45', nasc:'1983-12-05', tipo:'Terceirizado', matricula:'TC-7794', escolaridade:'Médio completo', lotacao:'Contrato 021/2025 — Vigilância', situacao:'Ativo', tel:'(61) 98666-7788', foto:false, criado:'2026-01-22'},
+      {id:'PES-0007', nome:'Diego Nunes Ferreira', cpf:'678.901.234-56', nasc:'1996-07-08', tipo:'Reeducando', matricula:'FN-30510', escolaridade:'Fundamental incompleto', lotacao:'DSEL / Limpeza', situacao:'Desligado', tel:'—', foto:true, criado:'2026-02-01'}
+    ],
+    reeducandos: [
+      {id:'REE-0001', pessoaId:'PES-0003', funap:'FUNAP/2026/0412', apresentacao:'2026-03-02', contrato:'2026-03-05', lotacao:'DSEL / Limpeza', jornada:'08:00 às 17:00', etapa:7, situacao:'Ativo', obs:'Apto para atividades externas.'},
+      {id:'REE-0002', pessoaId:'PES-0004', funap:'FUNAP/2026/0455', apresentacao:'2026-03-14', contrato:'2026-03-18', lotacao:'DSEL / Jardinagem', jornada:'07:00 às 16:00', etapa:5, situacao:'Ativo', obs:''},
+      {id:'REE-0003', pessoaId:'PES-0007', funap:'FUNAP/2026/0510', apresentacao:'2026-02-01', contrato:'2026-02-04', lotacao:'DSEL / Limpeza', jornada:'08:00 às 17:00', etapa:11, situacao:'Desligado', obs:'Desligamento comunicado via SEI.'}
+    ],
+    frequencia: [
+      {id:'FRQ-0001', data:'2026-08-31', pessoaId:'PES-0003', grupo:'Reeducandos', situacao:'Presente', just:'', resp:'servidor.dsel'},
+      {id:'FRQ-0002', data:'2026-08-31', pessoaId:'PES-0004', grupo:'Reeducandos', situacao:'Falta', just:'Sem comunicação prévia', resp:'servidor.dsel'},
+      {id:'FRQ-0003', data:'2026-08-31', pessoaId:'PES-0005', grupo:'Limpeza', situacao:'Presente', just:'', resp:'servidor.dsel'},
+      {id:'FRQ-0004', data:'2026-08-31', pessoaId:'PES-0006', grupo:'Vigilância', situacao:'Atestado', just:'Atestado médico 2 dias', resp:'servidor.dsel'},
+      {id:'FRQ-0005', data:'2026-08-28', pessoaId:'PES-0003', grupo:'Reeducandos', situacao:'Presente', just:'', resp:'servidor.dsel'},
+      {id:'FRQ-0006', data:'2026-08-28', pessoaId:'PES-0005', grupo:'Limpeza', situacao:'Ausênte justificada', just:'Substituída por Maria J. (posto coberto)', resp:'servidor.dsel'}
+    ],
+    contratos: [
+      {id:'CTR-0001', numero:'014/2025', empresa:'Alfa Serviços de Limpeza LTDA', objeto:'Limpeza e conservação', inicio:'2025-06-01', fim:'2026-05-31', postos:24, ocupados:22, fiscal:'Ana Clara Ribeiro', situacao:'Vigente'},
+      {id:'CTR-0002', numero:'021/2025', empresa:'Vigilância Planalto S/A', objeto:'Vigilância patrimonial armada', inicio:'2025-09-01', fim:'2026-08-31', postos:16, ocupados:15, fiscal:'Marcos Vinícius Alves', situacao:'A vencer'},
+      {id:'CTR-0003', numero:'008/2024', empresa:'Brigada Central Prevenção LTDA', objeto:'Brigada de incêndio', inicio:'2024-11-01', fim:'2026-10-31', postos:8, ocupados:8, fiscal:'Ana Clara Ribeiro', situacao:'Vigente'}
+    ],
+    cartoes: [
+      {id:'CAR-0001', numero:'0001', titularId:'PES-0003', status:'Em uso', entrega:'2026-03-06', devolucao:'', motivo:'', hist:[{d:'2026-03-06',t:'Entrega ao titular',u:'servidor.dsel'}]},
+      {id:'CAR-0002', numero:'0002', titularId:'PES-0004', status:'Em uso', entrega:'2026-03-19', devolucao:'', motivo:'', hist:[{d:'2026-03-19',t:'Entrega ao titular',u:'servidor.dsel'}]},
+      {id:'CAR-0003', numero:'0003', titularId:'', status:'Disponível', entrega:'', devolucao:'', motivo:'', hist:[{d:'2026-01-10',t:'Cadastro do cartão',u:'admin'}]},
+      {id:'CAR-0004', numero:'0004', titularId:'PES-0007', status:'Aguardando devolução', entrega:'2026-02-05', devolucao:'', motivo:'Desligamento em andamento', hist:[{d:'2026-02-05',t:'Entrega ao titular',u:'servidor.dsel'},{d:'2026-08-20',t:'Solicitada devolução (desligamento)',u:'servidor.dsel'}]},
+      {id:'CAR-0005', numero:'0005', titularId:'PES-0006', status:'Bloqueado', entrega:'2026-01-25', devolucao:'', motivo:'Perda comunicada — ocorrência registrada', hist:[{d:'2026-01-25',t:'Entrega ao titular',u:'servidor.dsel'},{d:'2026-07-14',t:'Bloqueio por perda',u:'servidor.dsel'}]},
+      {id:'CAR-0006', numero:'0006', titularId:'', status:'Danificado', entrega:'', devolucao:'2026-06-30', motivo:'Trinca no chip', hist:[{d:'2026-06-30',t:'Devolvido danificado',u:'servidor.dsel'}]}
+    ],
+    estoque: [
+      {id:'EST-0001', item:'Blusa', tam:'M', cor:'Azul', condicao:'Novo', qtd:34},
+      {id:'EST-0002', item:'Blusa', tam:'G', cor:'Azul', condicao:'Novo', qtd:21},
+      {id:'EST-0003', item:'Calça', tam:'42', cor:'Cinza', condicao:'Novo', qtd:9},
+      {id:'EST-0004', item:'Calça', tam:'44', cor:'Cinza', condicao:'Usado em bom estado', qtd:12},
+      {id:'EST-0005', item:'Bota', tam:'41', cor:'Preto', condicao:'Novo', qtd:4},
+      {id:'EST-0006', item:'Bota', tam:'43', cor:'Preto', condicao:'Usado para avaliação', qtd:3},
+      {id:'EST-0007', item:'Chapéu', tam:'Único', cor:'Bege', condicao:'Novo', qtd:18},
+      {id:'EST-0008', item:'Boné', tam:'Único', cor:'Azul', condicao:'Novo', qtd:26},
+      {id:'EST-0009', item:'Luva', tam:'M', cor:'Amarelo', condicao:'Novo', qtd:2},
+      {id:'EST-0010', item:'Meia', tam:'Único', cor:'Preto', condicao:'Novo', qtd:41}
+    ],
+    movimentos: [
+      {id:'MOV-0001', data:'2026-03-06', estoqueId:'EST-0001', tipo:'Entrega', qtd:2, pessoaId:'PES-0003', obs:'Kit inicial'},
+      {id:'MOV-0002', data:'2026-03-06', estoqueId:'EST-0003', tipo:'Entrega', qtd:2, pessoaId:'PES-0003', obs:'Kit inicial'},
+      {id:'MOV-0003', data:'2026-03-19', estoqueId:'EST-0002', tipo:'Entrega', qtd:2, pessoaId:'PES-0004', obs:'Kit inicial'},
+      {id:'MOV-0004', data:'2026-08-20', estoqueId:'EST-0005', tipo:'Devolução', qtd:1, pessoaId:'PES-0007', obs:'Desligamento — usado em bom estado'}
+    ],
+    desligamentos: [
+      {id:'DES-0001', pessoaId:'PES-0007', origem:'Gestão DSEL', data:'2026-08-20', sei:'00112-00004567/2026-11', motivo:'Término de contrato FUNAP', situacao:'Em andamento',
+       check:{comunicacao:true, sei:true, cartao:false, uniforme:false, ponto:true, encerramento:false}}
+    ],
+    contas: [
+      {id:'CNT-0001', ref:'2026-08', tipo:'Energia', unidade:'Sede DSEL', valor:18452.77, sei:'00112-00009911/2026-44',
+       check:{nota:true, atesto:true, empenho:true, provisionamento:false, memorando:false, despacho:false}},
+      {id:'CNT-0002', ref:'2026-08', tipo:'Água', unidade:'Sede DSEL', valor:4310.20, sei:'00112-00009912/2026-89',
+       check:{nota:true, atesto:true, empenho:false, provisionamento:false, memorando:false, despacho:false}},
+      {id:'CNT-0003', ref:'2026-07', tipo:'Energia', unidade:'Almoxarifado', valor:6120.05, sei:'00112-00008120/2026-10',
+       check:{nota:true, atesto:true, empenho:true, provisionamento:true, memorando:true, despacho:true}}
+    ],
+    ocorrencias: [
+      {id:'OCO-0001', data:'2026-08-27', tipo:'Furto', local:'Pátio de veículos', gravidade:'Alta', desc:'Subtração de cabo de cobre próximo ao portão 3.', contratoId:'CTR-0002', bo:'BO-2026/8841', prov:'Aberta solicitação de CFTV e comunicação à chefia.', situacao:'Em análise'},
+      {id:'OCO-0002', data:'2026-08-19', tipo:'Dano', local:'Bloco B — corredor', gravidade:'Média', desc:'Vidro trincado durante movimentação de material.', contratoId:'CTR-0001', bo:'', prov:'Termo de ocorrência encaminhado à empresa.', situacao:'Concluída'},
+      {id:'OCO-0003', data:'2026-08-12', tipo:'Acesso indevido', local:'Portaria principal', gravidade:'Alta', desc:'Tentativa de acesso com cartão bloqueado.', contratoId:'', bo:'', prov:'Cartão 0005 mantido bloqueado; ciência ao CFTV.', situacao:'Em análise'}
+    ],
+    cftv: [
+      {id:'CFT-0001', data:'2026-08-27', solicitante:'Ana Clara Ribeiro', ocorrenciaId:'OCO-0001', camera:'CAM-07 / Portão 3', janela:'27/08 20:00 — 23:00', finalidade:'Apurar furto de cabo', situacao:'Aguardando liberação'},
+      {id:'CFT-0002', data:'2026-08-13', solicitante:'Marcos Vinícius Alves', ocorrenciaId:'OCO-0003', camera:'CAM-01 / Portaria', janela:'12/08 07:30 — 08:30', finalidade:'Identificar portador do cartão', situacao:'Atendida'}
+    ],
+    tarefas: [
+      {id:'TAR-0001', titulo:'Recolher cartão 0004 (desligamento)', resp:'servidor.dsel', prazo:'2026-09-02', prioridade:'Alta', status:'Pendente'},
+      {id:'TAR-0002', titulo:'Repor estoque de luvas M', resp:'almoxarifado', prazo:'2026-09-05', prioridade:'Média', status:'Pendente'},
+      {id:'TAR-0003', titulo:'Fechar checklist de energia 08/2026', resp:'servidor.dsel', prazo:'2026-09-08', prioridade:'Alta', status:'Em andamento'},
+      {id:'TAR-0004', titulo:'Renovação do contrato 021/2025', resp:'ana.ribeiro', prazo:'2026-09-15', prioridade:'Alta', status:'Em andamento'}
+    ],
+    usuarios: [
+      {id:'USR-0001', login:'admin.ti', nome:'Administrador TI', perfil:'Administrador', situacao:'Ativo', ultimo:'2026-08-31 08:12'},
+      {id:'USR-0002', login:'servidor.dsel', nome:'Servidor DSEL', perfil:'Gestor DSEL', situacao:'Ativo', ultimo:'2026-08-31 18:02'},
+      {id:'USR-0003', login:'ana.ribeiro', nome:'Ana Clara Ribeiro', perfil:'Operador', situacao:'Ativo', ultimo:'2026-08-30 16:40'},
+      {id:'USR-0004', login:'cftv.oper', nome:'Operador CFTV', perfil:'CFTV', situacao:'Ativo', ultimo:'2026-08-29 22:05'},
+      {id:'USR-0005', login:'consulta.aud', nome:'Auditoria Interna', perfil:'Consulta', situacao:'Inativo', ultimo:'2026-06-11 10:20'}
+    ],
+    auditoria: [
+      {d:'2026-08-31 18:02', u:'servidor.dsel', a:'Login', o:'Sessão iniciada no módulo Dashboard'},
+      {d:'2026-08-31 09:14', u:'servidor.dsel', a:'Frequência', o:'Lançamento de falta — Rogério Lima Barbosa'},
+      {d:'2026-08-27 21:40', u:'ana.ribeiro', a:'Ocorrência', o:'Registro OCO-0001 (Furto)'},
+      {d:'2026-08-20 15:03', u:'servidor.dsel', a:'Desligamento', o:'Abertura DES-0001 — Diego Nunes Ferreira'}
+    ],
+    capturas: []
+  };
+}
+
+let DB = load();
+function load(){ try{ const r = localStorage.getItem(STORE_KEY); return r ? JSON.parse(r) : seed(); }catch(e){ return seed(); } }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }catch(e){} }
+function logAudit(acao, obj){ DB.auditoria.unshift({d:nowStamp(), u:DB.usuario, a:acao, o:obj}); if(DB.auditoria.length>300) DB.auditoria.pop(); save(); }
+
+/* ---------------- Permissões (menor privilégio) ---------------- */
+const PERMS = {
+  'Administrador': {write:true, cftv:true, audit:true},
+  'Gestor DSEL':   {write:true, cftv:false, audit:true},
+  'Operador':      {write:true, cftv:false, audit:false},
+  'CFTV':          {write:false, cftv:true, audit:false},
+  'Consulta':      {write:false, cftv:false, audit:false}
+};
+const can = k => !!(PERMS[DB.perfil] || {})[k];
+function guard(){
+  if(!can('write')){ toast('Perfil "'+DB.perfil+'" não possui permissão de escrita neste módulo.', 'err'); return false; }
+  return true;
+}
+
+/* ---------------- Utilitários de UI ---------------- */
+function toast(msg, kind){
+  const w = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (kind === 'err' ? 'err' : kind === 'ok' ? 'ok' : '');
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='.3s'; setTimeout(()=>t.remove(),320); }, 3200);
+}
+function modal(title, bodyHTML, footerHTML, wide){
+  const root = document.getElementById('modalRoot');
+  root.innerHTML = `<div class="modal-bd" id="mbd"><div class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-label="${esc(title)}">
+    <div class="modal-h"><h3>${esc(title)}</h3><button type="button" aria-label="Fechar" id="mClose">&times;</button></div>
+    <div class="modal-b">${bodyHTML}</div>
+    ${footerHTML ? `<div class="modal-f">${footerHTML}</div>` : ''}
+  </div></div>`;
+  document.getElementById('mClose').onclick = closeModal;
+  document.getElementById('mbd').addEventListener('mousedown', e => { if(e.target.id === 'mbd') closeModal(); });
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+function val(id){ const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+function chk(id){ const e = document.getElementById(id); return e ? e.checked : false; }
+function pessoa(id){ return DB.pessoas.find(p => p.id === id) || null; }
+function pnome(id){ const p = pessoa(id); return p ? p.nome : '—'; }
+function opts(list, selected, fmt){ return list.map(x => `<option value="${esc(x.v)}" ${x.v===selected?'selected':''}>${esc(x.t)}</option>`).join(''); }
+function pessoaOptions(sel, filtroTipo){
+  return DB.pessoas.filter(p => !filtroTipo || p.tipo === filtroTipo)
+    .map(p => `<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.nome)} — ${esc(p.tipo)}</option>`).join('');
+}
+function sel(id, list, cur){ return `<select id="${id}">${list.map(v=>`<option ${v===cur?'selected':''}>${esc(v)}</option>`).join('')}</select>`; }
+function tagFor(txt){
+  const m = {
+    'Ativo':'t-green','Vigente':'t-green','Presente':'t-green','Concluída':'t-green','Atendida':'t-green','Disponível':'t-green','Novo':'t-green',
+    'Em uso':'t-blue','Em andamento':'t-blue','Em análise':'t-blue','Servidor':'t-blue','Aguardando liberação':'t-gold',
+    'A vencer':'t-gold','Aguardando devolução':'t-gold','Atestado':'t-gold','Ausênte justificada':'t-gold','Pendente':'t-gold','Reeducando':'t-gold','Usado em bom estado':'t-gold','Usado para avaliação':'t-gold',
+    'Falta':'t-red','Bloqueado':'t-red','Danificado':'t-red','Desligado':'t-red','Encerrado':'t-gray','Descartado':'t-gray','Inativo':'t-gray','Terceirizado':'t-gray','Devolvido':'t-gray'
+  };
+  return `<span class="tag ${m[txt] || 't-gray'}">${esc(txt)}</span>`;
+}
+/* ================= Navegação ================= */
+const ICONS = {
+  dash:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  user:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  card:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
+  box:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+  file:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+  drop:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>',
+  alert:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3l9 17H3z"/><path d="M12 9v5M12 17h.01"/></svg>',
+  cam:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+  task:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 7l3 3 5-6"/><path d="M10 12h10M4 17l3 3 5-6M14 18h6"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>',
+  contract:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 3h9l5 5v13H5z"/><path d="M9 12h6M9 16h4M14 3v5h5"/></svg>',
+  exit:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M14 3H5v18h9M18 8l4 4-4 4M10 12h12"/></svg>'
+};
+
+const MENU = [
+  {group:'Painel', items:[{k:'dash', t:'Dashboard gerencial', i:'dash'}]},
+  {group:'Pessoas e frequência', items:[
+    {k:'pessoas', t:'Gestão de Pessoas', i:'user'},
+    {k:'reeducandos', t:'Reeducandos / FUNAP', i:'shield'},
+    {k:'frequencia', t:'Frequência', i:'cal'},
+    {k:'captura', t:'Captura móvel', i:'phone'}
+  ]},
+  {group:'Contratos e patrimônio', items:[
+    {k:'contratos', t:'Contratos e fiscalização', i:'contract'},
+    {k:'cartoes', t:'Cartões de acesso', i:'card'},
+    {k:'estoque', t:'Estoque de uniformes', i:'box'}
+  ]},
+  {group:'Processos', items:[
+    {k:'desligamentos', t:'Desligamentos e SEI', i:'exit'},
+    {k:'contas', t:'Água e Energia', i:'drop'},
+    {k:'documentos', t:'Central de documentos', i:'doc'},
+    {k:'tarefas', t:'Tarefas', i:'task'}
+  ]},
+  {group:'Segurança', items:[
+    {k:'ocorrencias', t:'Ocorrências', i:'alert'},
+    {k:'cftv', t:'CFTV', i:'cam'},
+    {k:'usuarios', t:'Usuários e auditoria', i:'file'}
+  ]}
+];
+
+let ROUTE = 'dash';
+function renderNav(){
+  const nav = document.getElementById('sidebar');
+  const counts = {
+    pessoas: DB.pessoas.filter(p=>p.situacao==='Ativo').length,
+    reeducandos: DB.reeducandos.filter(r=>r.situacao==='Ativo').length,
+    desligamentos: DB.desligamentos.filter(d=>d.situacao==='Em andamento').length,
+    ocorrencias: DB.ocorrencias.filter(o=>o.situacao==='Em análise').length,
+    tarefas: DB.tarefas.filter(t=>t.status!=='Concluída').length,
+    cftv: DB.cftv.filter(c=>c.situacao==='Aguardando liberação').length
+  };
+  nav.innerHTML = MENU.map(g => `<div class="group">${esc(g.group)}</div>` + g.items.map(it =>
+    `<button class="navbtn ${ROUTE===it.k?'active':''}" data-k="${it.k}">${ICONS[it.i]}<span>${esc(it.t)}</span>${counts[it.k]?`<span class="count">${counts[it.k]}</span>`:''}</button>`
+  ).join('')).join('') +
+  `<div class="foot">Versão 1.0 &mdash; conceitual<br>Dados fictícios para demonstração.<br>Perfil ativo: <b style="color:#F2AF1E">${esc(DB.perfil)}</b></div>`;
+  nav.querySelectorAll('.navbtn').forEach(b => b.onclick = () => { go(b.dataset.k); });
+}
+function go(k){ ROUTE = k; renderNav(); render(); window.scrollTo(0,0); document.getElementById('sidebar').classList.remove('open'); }
+
+function head(title, sub, actions){
+  return `<div class="page-head"><div><h2>${title}</h2><p>${sub}</p></div><div class="actions no-print">${actions||''}</div></div>`;
+}
+function table(cols, rows, emptyMsg){
+  if(!rows.length) return `<div class="empty">${esc(emptyMsg||'Nenhum registro encontrado.')}</div>`;
+  return `<div class="table-wrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+
+/* ================= Router ================= */
+function render(){
+  const v = document.getElementById('view');
+  const map = {dash:viewDash, pessoas:viewPessoas, reeducandos:viewReeducandos, frequencia:viewFrequencia,
+    captura:viewCaptura, contratos:viewContratos, cartoes:viewCartoes, estoque:viewEstoque,
+    desligamentos:viewDesligamentos, contas:viewContas, documentos:viewDocumentos, tarefas:viewTarefas,
+    ocorrencias:viewOcorrencias, cftv:viewCftv, usuarios:viewUsuarios};
+  v.innerHTML = (map[ROUTE] || viewDash)();
+  if(window.__afterRender){ const f = window.__afterRender; window.__afterRender = null; f(); }
+}
+
+/* ================= 1. Dashboard ================= */
+function viewDash(){
+  const ativos = DB.pessoas.filter(p=>p.situacao==='Ativo').length;
+  const reeAtivos = DB.reeducandos.filter(r=>r.situacao==='Ativo').length;
+  const emUso = DB.cartoes.filter(c=>c.status==='Em uso').length;
+  const dispon = DB.cartoes.filter(c=>c.status==='Disponível').length;
+  const critico = DB.estoque.filter(e=>e.qtd<=5);
+  const desPend = DB.desligamentos.filter(d=>d.situacao==='Em andamento').length;
+  const ocoAbertas = DB.ocorrencias.filter(o=>o.situacao==='Em análise');
+  const cftvPend = DB.cftv.filter(c=>c.situacao==='Aguardando liberação').length;
+  const contasPend = DB.contas.filter(c=>pctConta(c)<100).length;
+  const ctrVencer = DB.contratos.filter(c=>c.situacao==='A vencer');
+
+  const ultimaData = DB.frequencia.map(f=>f.data).sort().pop() || hoje();
+  const doDia = DB.frequencia.filter(f=>f.data===ultimaData);
+  const pres = doDia.filter(f=>f.situacao==='Presente').length;
+  const taxa = doDia.length ? Math.round(pres/doDia.length*100) : 0;
+
+  const grupos = ['Reeducandos','Brigada','Vigilância','Limpeza'];
+  const barras = grupos.map(g=>{
+    const t = DB.frequencia.filter(f=>f.grupo===g);
+    const p = t.filter(f=>f.situacao==='Presente').length;
+    const pc = t.length ? Math.round(p/t.length*100) : 0;
+    return `<div class="bar-row"><span>${esc(g)}</span><span class="bar ${pc>=90?'green':pc>=70?'gold':'red'}"><span style="width:${pc}%"></span></span><b>${pc}%</b></div>`;
+  }).join('');
+
+  const alertas = [];
+  if(critico.length) alertas.push({k:'red', t:'Estoque crítico', d:critico.map(e=>`${e.item} ${e.tam} (${e.qtd})`).join(', ')});
+  if(desPend) alertas.push({k:'', t:'Desligamento com providências pendentes', d:`${desPend} processo(s) aguardando cartão, uniforme ou encerramento.`});
+  if(cftvPend) alertas.push({k:'', t:'Solicitações de CFTV aguardando liberação', d:`${cftvPend} solicitação(ões) pendente(s) de análise do responsável.`});
+  if(ctrVencer.length) alertas.push({k:'', t:'Contrato próximo do vencimento', d:ctrVencer.map(c=>`${c.numero} — ${c.empresa} (fim ${brDate(c.fim)})`).join('; ')});
+  if(ocoAbertas.length) alertas.push({k:'red', t:'Ocorrências em análise', d:ocoAbertas.map(o=>`${o.tipo} — ${o.local} (${brDate(o.data)})`).join('; ')});
+  if(contasPend) alertas.push({k:'blue', t:'Checklist de água/energia incompleto', d:`${contasPend} conta(s) com etapas pendentes.`});
+
+  const tarefas = DB.tarefas.filter(t=>t.status!=='Concluída').slice(0,6).map(t=>
+    `<tr><td>${esc(t.titulo)}</td><td>${esc(t.resp)}</td><td>${brDate(t.prazo)}</td><td>${tagFor(t.prioridade==='Alta'?'Falta':'Pendente').replace(/>(Falta|Pendente)</,'>'+esc(t.prioridade)+'<')}</td><td>${tagFor(t.status)}</td></tr>`);
+
+  return head('Dashboard gerencial',
+    'Visão rápida do que está acontecendo, do que está atrasado e da providência necessária.',
+    `<button class="btn btn-ghost" onclick="window.print()">Imprimir painel</button>
+     <button class="btn btn-primary" onclick="go('documentos')">Gerar relatório</button>`) +
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi"><div class="lbl">Pessoas ativas</div><div class="val">${ativos}</div><div class="sub">${reeAtivos} reeducandos vinculados</div></div>
+    <div class="kpi gold"><div class="lbl">Frequência (${brDate(ultimaData)})</div><div class="val">${taxa}%</div><div class="sub">${pres} de ${doDia.length} lançamentos presentes</div></div>
+    <div class="kpi green"><div class="lbl">Cartões</div><div class="val">${emUso}</div><div class="sub">${dispon} disponíveis · ${DB.cartoes.length} no total</div></div>
+    <div class="kpi red"><div class="lbl">Pendências críticas</div><div class="val">${critico.length + desPend + ocoAbertas.length}</div><div class="sub">estoque, desligamentos e ocorrências</div></div>
+  </div>
+  <div class="grid g3">
+    <div class="card card-pad" style="grid-column:span 2">
+      <h3>Alertas e pendências <small>ordenados por criticidade</small></h3>
+      <div class="alert-list">${alertas.length ? alertas.map(a=>`<div class="alert-item ${a.k}"><b>${esc(a.t)}</b><p>${esc(a.d)}</p></div>`).join('') : '<div class="empty">Sem pendências registradas.</div>'}</div>
+    </div>
+    <div class="card card-pad">
+      <h3>Frequência por grupo</h3>
+      <div class="bars">${barras}</div>
+      <div class="note" style="margin-top:14px">Percentuais preliminares. Glosas e descontos dependem de análise do responsável e das regras do contrato.</div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <div class="toolbar"><b>Tarefas em aberto</b><div class="right"><button class="btn btn-ghost btn-sm" onclick="go('tarefas')">Ver todas</button></div></div>
+      ${table(['Tarefa','Responsável','Prazo','Prioridade','Status'], tarefas, 'Nenhuma tarefa em aberto.')}
+    </div>
+    <div class="card">
+      <div class="toolbar"><b>Contratos</b><div class="right"><button class="btn btn-ghost btn-sm" onclick="go('contratos')">Fiscalização</button></div></div>
+      ${table(['Contrato','Empresa','Postos','Vigência','Situação'], DB.contratos.map(c=>
+        `<tr><td><b>${esc(c.numero)}</b></td><td>${esc(c.empresa)}</td><td>${c.ocupados}/${c.postos}</td><td>${brDate(c.inicio)} — ${brDate(c.fim)}</td><td>${tagFor(c.situacao)}</td></tr>`))}
+    </div>
+  </div>`;
+}
+
+/* ================= 2. Pessoas ================= */
+let fPessoa = {q:'', tipo:'Todos'};
+function viewPessoas(){
+  const rows = DB.pessoas.filter(p =>
+      (fPessoa.tipo==='Todos' || p.tipo===fPessoa.tipo) &&
+      (!fPessoa.q || (p.nome+p.cpf+p.matricula+p.lotacao).toLowerCase().includes(fPessoa.q.toLowerCase())))
+    .map(p => `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px"><span class="avatar" style="background:${p.foto?'#0050B3':'#94A5BF'}">${esc(initials(p.nome))}</span>
+      <div><b>${esc(p.nome)}</b><br><small style="color:var(--muted)">${esc(p.id)} · ${p.foto?'com fotografia':'sem fotografia'}</small></div></div></td>
+      <td>${tagFor(p.tipo)}</td><td class="mono">${esc(p.cpf)}</td><td>${esc(p.matricula)}</td>
+      <td>${esc(p.escolaridade)}</td><td>${esc(p.lotacao)}</td><td>${tagFor(p.situacao)}</td>
+      <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="fichaPessoa('${p.id}')">Ficha</button>
+      <button class="btn btn-ghost btn-sm" onclick="formPessoa('${p.id}')">Editar</button></td></tr>`);
+
+  return head('Gestão de Pessoas',
+    'Cadastro único de servidores, reeducandos e terceirizados, com identificação, fotografia, escolaridade e histórico.',
+    `<button class="btn btn-gold" onclick="go('captura')">Capturar por smartphone</button>
+     <button class="btn btn-primary" onclick="formPessoa()">+ Nova pessoa</button>`) +
+  `<div class="card">
+    <div class="toolbar">
+      <input type="search" id="qPessoa" placeholder="Buscar por nome, CPF, matrícula ou lotação" value="${esc(fPessoa.q)}"
+        oninput="fPessoa.q=this.value;window.__afterRender=()=>document.getElementById('qPessoa').focus();render()">
+      <select onchange="fPessoa.tipo=this.value;render()">${['Todos','Servidor','Reeducando','Terceirizado'].map(t=>`<option ${t===fPessoa.tipo?'selected':''}>${t}</option>`).join('')}</select>
+      <div class="right"><button class="btn btn-ghost btn-sm" onclick="exportCSV('pessoas')">Exportar CSV</button></div>
+    </div>
+    ${table(['Pessoa','Tipo','CPF','Matrícula','Escolaridade','Lotação','Situação','Ações'], rows)}
+  </div>`;
+}
+function formPessoa(id){
+  if(!guard()) return;
+  const p = id ? pessoa(id) : {nome:'',cpf:'',nasc:'',tipo:'Servidor',matricula:'',escolaridade:'Médio completo',lotacao:'',situacao:'Ativo',tel:'',foto:false};
+  modal(id ? 'Editar pessoa' : 'Nova pessoa', `<div class="form-grid">
+    <div class="field full"><label for="fNome">Nome completo *</label><input id="fNome" value="${esc(p.nome)}"></div>
+    <div class="field"><label for="fCpf">CPF</label><input id="fCpf" value="${esc(p.cpf)}" placeholder="000.000.000-00"></div>
+    <div class="field"><label for="fNasc">Data de nascimento</label><input id="fNasc" type="date" value="${esc(p.nasc)}"></div>
+    <div class="field"><label for="fTipo">Tipo</label>${sel('fTipo',['Servidor','Reeducando','Terceirizado','Visitante'],p.tipo)}</div>
+    <div class="field"><label for="fMat">Matrícula / vínculo</label><input id="fMat" value="${esc(p.matricula)}"></div>
+    <div class="field"><label for="fEsc">Escolaridade</label>${sel('fEsc',['Fundamental incompleto','Fundamental completo','Médio incompleto','Médio completo','Superior incompleto','Superior completo'],p.escolaridade)}</div>
+    <div class="field"><label for="fTel">Telefone</label><input id="fTel" value="${esc(p.tel)}"></div>
+    <div class="field full"><label for="fLot">Lotação / posto</label><input id="fLot" value="${esc(p.lotacao)}"></div>
+    <div class="field"><label for="fSit">Situação</label>${sel('fSit',['Ativo','Suspenso','Desligado'],p.situacao)}</div>
+    <div class="field"><label>Fotografia</label><label class="check" style="margin:0"><input type="checkbox" id="fFoto" ${p.foto?'checked':''}><span>Fotografia registrada</span></label></div>
+  </div>
+  <div class="note">Todo registro guarda data, usuário responsável e histórico, conforme as regras de negócio do projeto.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="savePessoa('${id||''}')">Salvar</button>`);
+}
+function savePessoa(id){
+  const nome = val('fNome');
+  if(nome.length < 3){ toast('Informe o nome completo.', 'err'); return; }
+  const obj = {nome, cpf:val('fCpf'), nasc:val('fNasc'), tipo:val('fTipo'), matricula:val('fMat'),
+    escolaridade:val('fEsc'), lotacao:val('fLot'), situacao:val('fSit'), tel:val('fTel')||'—', foto:chk('fFoto')};
+  if(id){ Object.assign(pessoa(id), obj); logAudit('Pessoas','Alteração de cadastro — '+nome); }
+  else { obj.id = 'PES-' + String(DB.pessoas.length+1).padStart(4,'0'); obj.criado = hoje(); DB.pessoas.push(obj); logAudit('Pessoas','Inclusão de cadastro — '+nome); }
+  save(); closeModal(); renderNav(); render(); toast('Cadastro salvo com sucesso.', 'ok');
+}
+function fichaPessoa(id){
+  const p = pessoa(id); if(!p) return;
+  const ree = DB.reeducandos.find(r=>r.pessoaId===id);
+  const frq = DB.frequencia.filter(f=>f.pessoaId===id);
+  const car = DB.cartoes.filter(c=>c.titularId===id);
+  const mov = DB.movimentos.filter(m=>m.pessoaId===id);
+  modal('Ficha — '+p.nome, `
+    <div class="grid g2" style="gap:12px">
+      <div><b>Identificação</b><table style="margin-top:6px"><tbody>
+        <tr><td>Código</td><td><b>${esc(p.id)}</b></td></tr>
+        <tr><td>CPF</td><td>${esc(p.cpf||'—')}</td></tr>
+        <tr><td>Nascimento</td><td>${brDate(p.nasc)}</td></tr>
+        <tr><td>Tipo</td><td>${tagFor(p.tipo)}</td></tr>
+        <tr><td>Matrícula</td><td>${esc(p.matricula||'—')}</td></tr>
+        <tr><td>Escolaridade</td><td>${esc(p.escolaridade)}</td></tr>
+        <tr><td>Lotação</td><td>${esc(p.lotacao||'—')}</td></tr>
+        <tr><td>Situação</td><td>${tagFor(p.situacao)}</td></tr>
+      </tbody></table></div>
+      <div><b>Vínculos e movimentações</b><table style="margin-top:6px"><tbody>
+        <tr><td>Vínculo FUNAP</td><td>${ree?esc(ree.funap):'—'}</td></tr>
+        <tr><td>Lançamentos de frequência</td><td>${frq.length}</td></tr>
+        <tr><td>Cartões vinculados</td><td>${car.length? car.map(c=>esc(c.numero)+' ('+esc(c.status)+')').join(', ') : '—'}</td></tr>
+        <tr><td>Movimentações de uniforme</td><td>${mov.length}</td></tr>
+        <tr><td>Fotografia</td><td>${p.foto?'Registrada':'Pendente'}</td></tr>
+        <tr><td>Cadastrado em</td><td>${brDate(p.criado)}</td></tr>
+      </tbody></table></div>
+    </div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     <button class="btn btn-primary" onclick="closeModal();abrirDoc('ficha','${p.id}')">Gerar ficha em documento</button>`, true);
+}
+
+/* ================= 3. Reeducandos / FUNAP ================= */
+const ETAPAS = ['Apresentação','Identificação','Fotografia','Escolaridade','Documentos','Contrato/Lotação','Folha de ponto','Uniforme','Cartão','Acompanhamento','Desligamento','Devoluções','Encerramento'];
+function viewReeducandos(){
+  const rows = DB.reeducandos.map(r=>{
+    const p = pessoa(r.pessoaId) || {nome:'(sem cadastro)'};
+    const pc = Math.round(r.etapa/ETAPAS.length*100);
+    return `<tr><td><b>${esc(p.nome)}</b><br><small style="color:var(--muted)">${esc(r.id)} · ${esc(r.funap)}</small></td>
+      <td>${brDate(r.apresentacao)}</td><td>${esc(r.lotacao)}</td><td>${esc(r.jornada)}</td>
+      <td style="min-width:180px"><div class="progress" style="margin:0 0 4px"><span style="width:${pc}%"></span></div>
+        <small style="color:var(--muted)">${esc(ETAPAS[Math.min(r.etapa,ETAPAS.length-1)])} (${pc}%)</small></td>
+      <td>${tagFor(r.situacao)}</td>
+      <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="fluxoReeducando('${r.id}')">Fluxo</button>
+      ${r.situacao==='Ativo'?`<button class="btn btn-danger btn-sm" onclick="abrirDesligamento('${r.id}')">Desligar</button>`:''}</td></tr>`;
+  });
+  return head('Reeducandos / FUNAP',
+    'Apresentação, documentos, contrato, lotação, frequência e desligamento — jornada completa integrada.',
+    `<button class="btn btn-primary" onclick="formReeducando()">+ Nova apresentação</button>`) +
+  `<div class="card card-pad" style="margin-bottom:16px">
+    <h3>Fluxo integrado do reeducando <small>item 4 do documento de arquitetura</small></h3>
+    <div class="steps">${ETAPAS.map((e,i)=>`<span class="step"><span class="n">${i+1}</span>${esc(e)}</span>`).join('')}</div>
+  </div>
+  <div class="card">${table(['Reeducando','Apresentação','Lotação','Jornada','Etapa do fluxo','Situação','Ações'], rows)}</div>`;
+}
+function formReeducando(){
+  if(!guard()) return;
+  modal('Nova apresentação de reeducando', `<div class="form-grid">
+    <div class="field full"><label for="rPes">Pessoa cadastrada *</label><select id="rPes">${pessoaOptions('', 'Reeducando')}</select>
+      <div class="help">Se a pessoa ainda não existir, cadastre primeiro em Gestão de Pessoas.</div></div>
+    <div class="field"><label for="rFunap">Processo FUNAP</label><input id="rFunap" placeholder="FUNAP/2026/0000"></div>
+    <div class="field"><label for="rApr">Data de apresentação</label><input id="rApr" type="date" value="${hoje()}"></div>
+    <div class="field"><label for="rLot">Lotação</label>${sel('rLot',['DSEL / Limpeza','DSEL / Jardinagem','DSEL / Administrativo','DSEL / Almoxarifado'],'DSEL / Limpeza')}</div>
+    <div class="field"><label for="rJor">Jornada</label><input id="rJor" value="08:00 às 17:00"></div>
+    <div class="field full"><label for="rObs">Observações</label><textarea id="rObs"></textarea></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveReeducando()">Registrar apresentação</button>`);
+}
+function saveReeducando(){
+  const pid = val('rPes');
+  if(!pid){ toast('Cadastre a pessoa antes de registrar a apresentação.', 'err'); return; }
+  if(DB.reeducandos.some(r=>r.pessoaId===pid && r.situacao==='Ativo')){ toast('Esta pessoa já possui vínculo ativo.', 'err'); return; }
+  DB.reeducandos.push({id:'REE-'+String(DB.reeducandos.length+1).padStart(4,'0'), pessoaId:pid, funap:val('rFunap')||'—',
+    apresentacao:val('rApr'), contrato:'', lotacao:val('rLot'), jornada:val('rJor'), etapa:1, situacao:'Ativo', obs:val('rObs')});
+  logAudit('Reeducandos','Apresentação registrada — '+pnome(pid));
+  save(); closeModal(); renderNav(); render(); toast('Apresentação registrada. Prossiga no fluxo.', 'ok');
+}
+function fluxoReeducando(id){
+  const r = DB.reeducandos.find(x=>x.id===id); if(!r) return;
+  const body = `<p style="margin-top:0;color:var(--muted);font-size:12.5px">Reeducando: <b style="color:var(--ink)">${esc(pnome(r.pessoaId))}</b> · ${esc(r.funap)}</p>
+    <div class="progress"><span style="width:${Math.round(r.etapa/ETAPAS.length*100)}%"></span></div>
+    ${ETAPAS.map((e,i)=>`<div class="check ${i<r.etapa?'done':''}">
+      <input type="checkbox" id="et${i}" ${i<r.etapa?'checked':''} onchange="setEtapa('${id}',${i},this.checked)">
+      <label for="et${i}"><b>${i+1}. ${esc(e)}</b><div class="meta">${i<r.etapa?'Concluído':'Pendente'}</div></label></div>`).join('')}
+    <div class="note gold">Marcar uma etapa avança o fluxo e registra data e usuário responsável no histórico.</div>`;
+  modal('Fluxo integrado — acompanhamento', body,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     <button class="btn btn-primary" onclick="closeModal();abrirDoc('termo','${r.pessoaId}')">Gerar termo de recebimento</button>`);
+}
+function setEtapa(id, i, on){
+  if(!can('write')){ toast('Sem permissão de escrita.', 'err'); fluxoReeducando(id); return; }
+  const r = DB.reeducandos.find(x=>x.id===id);
+  r.etapa = on ? i+1 : i;
+  logAudit('Reeducandos', `Fluxo ${r.id}: etapa "${ETAPAS[i]}" ${on?'concluída':'reaberta'}`);
+  save(); fluxoReeducando(id); render();
+}
+/* ================= 4. Frequência ================= */
+let fFrq = {data:'', grupo:'Todos'};
+function viewFrequencia(){
+  const datas = [...new Set(DB.frequencia.map(f=>f.data))].sort().reverse();
+  if(!fFrq.data) fFrq.data = datas[0] || hoje();
+  const rows = DB.frequencia.filter(f => f.data===fFrq.data && (fFrq.grupo==='Todos' || f.grupo===fFrq.grupo))
+    .map(f=>`<tr><td>${brDate(f.data)}</td><td><b>${esc(pnome(f.pessoaId))}</b></td><td>${esc(f.grupo)}</td>
+      <td>${tagFor(f.situacao)}</td><td>${esc(f.just||'—')}</td><td>${esc(f.resp)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="formFrq('${f.id}')">Editar</button>
+      <button class="btn btn-ghost btn-sm" onclick="abrirFolha('${f.pessoaId}','${String(f.data).slice(0,7)}')">Folha individual</button></td></tr>`);
+  const doDia = DB.frequencia.filter(f=>f.data===fFrq.data);
+  const cont = s => doDia.filter(f=>f.situacao===s).length;
+
+  return head('Frequência',
+    'Controle de presença de reeducandos, brigada, vigilância e limpeza, com justificativas e documentos de apoio.',
+    `<button class="btn btn-ghost" onclick="abrirDoc('espelho')">Espelho consolidado</button>
+     <button class="btn btn-gold" onclick="abrirFolha('', fFrq.data.slice(0,7))">Folha de Frequência Individual</button>
+     <button class="btn btn-primary" onclick="formFrq()">+ Lançar frequência</button>`) +
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi green"><div class="lbl">Presentes</div><div class="val">${cont('Presente')}</div><div class="sub">na data selecionada</div></div>
+    <div class="kpi red"><div class="lbl">Faltas</div><div class="val">${cont('Falta')}</div><div class="sub">sem justificativa aceita</div></div>
+    <div class="kpi gold"><div class="lbl">Justificadas / atestado</div><div class="val">${cont('Ausênte justificada')+cont('Atestado')}</div><div class="sub">com documento anexado</div></div>
+    <div class="kpi"><div class="lbl">Lançamentos</div><div class="val">${doDia.length}</div><div class="sub">registros no dia</div></div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <label style="font-size:12px;color:var(--muted)">Data</label>
+      <select onchange="fFrq.data=this.value;render()">${datas.map(d=>`<option value="${d}" ${d===fFrq.data?'selected':''}>${brDate(d)}</option>`).join('')}</select>
+      <select onchange="fFrq.grupo=this.value;render()">${['Todos','Reeducandos','Brigada','Vigilância','Limpeza'].map(g=>`<option ${g===fFrq.grupo?'selected':''}>${g}</option>`).join('')}</select>
+      <div class="right"><button class="btn btn-ghost btn-sm" onclick="exportCSV('frequencia')">Exportar CSV</button></div>
+    </div>
+    ${table(['Data','Pessoa','Grupo','Situação','Justificativa','Responsável','Ações'], rows, 'Nenhum lançamento para os filtros selecionados.')}
+  </div>`;
+}
+function formFrq(id){
+  if(!guard()) return;
+  const f = id ? DB.frequencia.find(x=>x.id===id) : {data:fFrq.data||hoje(), pessoaId:'', grupo:'Reeducandos', situacao:'Presente', just:''};
+  modal(id?'Editar lançamento':'Lançar frequência', `<div class="form-grid">
+    <div class="field"><label for="qData">Data</label><input id="qData" type="date" value="${esc(f.data)}"></div>
+    <div class="field"><label for="qGrupo">Grupo</label>${sel('qGrupo',['Reeducandos','Brigada','Vigilância','Limpeza'],f.grupo)}</div>
+    <div class="field full"><label for="qPes">Pessoa</label><select id="qPes">${pessoaOptions(f.pessoaId)}</select></div>
+    <div class="field"><label for="qSit">Situação</label>${sel('qSit',['Presente','Falta','Ausênte justificada','Atestado','Greve','Substituição'],f.situacao)}</div>
+    <div class="field"><label for="qDoc">Documento de apoio</label><input id="qDoc" placeholder="Ex.: atestado, ofício, e-mail"></div>
+    <div class="field full"><label for="qJust">Justificativa</label><textarea id="qJust">${esc(f.just)}</textarea></div>
+  </div>
+  <div class="note">Faltas e ocorrências de terceirizados podem subsidiar a fiscalização contratual. Cálculos são preliminares e sujeitos à análise do responsável.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveFrq('${id||''}')">Salvar</button>`);
+}
+function saveFrq(id){
+  const pid = val('qPes'); if(!pid){ toast('Selecione a pessoa.', 'err'); return; }
+  const sit = val('qSit'), just = val('qJust'), doc = val('qDoc');
+  if(sit!=='Presente' && !just){ toast('Ausências exigem justificativa.', 'err'); return; }
+  const obj = {data:val('qData'), pessoaId:pid, grupo:val('qGrupo'), situacao:sit, just: just + (doc?` [doc: ${doc}]`:''), resp:DB.usuario};
+  if(id) Object.assign(DB.frequencia.find(x=>x.id===id), obj);
+  else { obj.id = 'FRQ-'+String(DB.frequencia.length+1).padStart(4,'0'); DB.frequencia.push(obj); }
+  logAudit('Frequência', `${sit} — ${pnome(pid)} em ${brDate(obj.data)}`);
+  fFrq.data = obj.data; save(); closeModal(); render(); toast('Frequência registrada.', 'ok');
+}
+
+/* ================= 5. Captura móvel ================= */
+let sessao = null;
+function viewCaptura(){
+  const list = DB.capturas.slice(0,10).map(c=>`<tr><td>${esc(c.quando)}</td><td>${esc(c.pessoa)}</td><td>${esc(c.tipo)}</td><td>${esc(c.token)}</td><td>${tagFor(c.status)}</td></tr>`);
+  return head('Captura móvel por smartphone',
+    'O servidor autenticado abre uma sessão e gera um QR Code temporário. O aparelho institucional acessa somente a função autorizada e envia o arquivo — sem acesso direto ao banco de dados.',
+    `<button class="btn btn-primary" onclick="novaSessao()">Iniciar sessão de captura</button>`) +
+  `<div class="grid g2">
+    <div class="card card-pad">
+      <h3>Sessão atual</h3>
+      ${sessao ? `
+        <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center">
+          <div>${qrHTML(sessao.token)}</div>
+          <div>
+            <div style="font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Token temporário</div>
+            <div class="token mono">${esc(sessao.token)}</div>
+            <table style="margin-top:10px"><tbody>
+              <tr><td>Pessoa</td><td><b>${esc(sessao.pessoa)}</b></td></tr>
+              <tr><td>Função autorizada</td><td>${esc(sessao.tipo)}</td></tr>
+              <tr><td>Aberta em</td><td>${esc(sessao.quando)}</td></tr>
+              <tr><td>Validade</td><td>${sessao.exp} minutos</td></tr>
+            </tbody></table>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn btn-gold" onclick="simularEnvio()">Simular envio do arquivo</button>
+              <button class="btn btn-danger" onclick="sessao=null;render()">Encerrar sessão</button>
+            </div>
+          </div>
+        </div>` : `<div class="empty">Nenhuma sessão aberta. Inicie uma sessão para gerar o QR Code temporário.</div>`}
+      <div class="note" style="margin-top:16px">O token expira automaticamente e só libera a função autorizada (fotografia ou documento) para a pessoa selecionada.</div>
+    </div>
+    <div class="card">
+      <div class="toolbar"><b>Capturas recentes</b></div>
+      ${table(['Quando','Pessoa','Função','Token','Status'], list, 'Nenhuma captura registrada nesta demonstração.')}
+    </div>
+  </div>`;
+}
+function qrHTML(seedStr){
+  let h = 0; for(let i=0;i<seedStr.length;i++) h = (h*31 + seedStr.charCodeAt(i)) & 0xffffffff;
+  const cells = [];
+  const isFinder = (r,c) => (r<7&&c<7)||(r<7&&c>13)||(r>13&&c<7);
+  for(let r=0;r<21;r++) for(let c=0;c<21;c++){
+    let on;
+    if(isFinder(r,c)){
+      const rr = r<7?r:r-14, cc = c<7?c:c-14;
+      const R = r>13?rr:rr, C = c>13?cc:cc;
+      on = (R===0||R===6||C===0||C===6||(R>=2&&R<=4&&C>=2&&C<=4));
+    } else {
+      h = (h*1103515245 + 12345) & 0x7fffffff;
+      on = ((h >> 8) & 1) === 1;
+    }
+    cells.push(on ? '<i></i>' : '<i style="background:transparent"></i>');
+  }
+  return `<div class="qr" role="img" aria-label="QR Code da sessão de captura">${cells.join('')}</div>`;
+}
+function novaSessao(){
+  if(!guard()) return;
+  modal('Iniciar sessão de captura', `<div class="form-grid">
+    <div class="field full"><label for="cPes">Pessoa</label><select id="cPes">${pessoaOptions('')}</select></div>
+    <div class="field"><label for="cTipo">Função autorizada</label>${sel('cTipo',['Fotografia do cadastro','Digitalização de documento','Foto de ocorrência'],'Fotografia do cadastro')}</div>
+    <div class="field"><label for="cExp">Validade (minutos)</label>${sel('cExp',['5','10','15','30'],'10')}</div>
+  </div>
+  <div class="note gold">O smartphone não acessa o banco de dados: ele apenas envia o arquivo pela sessão autorizada.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="criarSessao()">Gerar QR Code</button>`);
+}
+function criarSessao(){
+  const pid = val('cPes');
+  sessao = {token: uid('QR'), pessoa: pnome(pid), pessoaId: pid, tipo: val('cTipo'), exp: val('cExp'), quando: nowStamp()};
+  logAudit('Captura móvel', 'Sessão aberta para '+sessao.pessoa+' ('+sessao.tipo+')');
+  closeModal(); render(); toast('Sessão criada. Leia o QR Code no aparelho institucional.', 'ok');
+}
+function simularEnvio(){
+  if(!sessao) return;
+  DB.capturas.unshift({quando:nowStamp(), pessoa:sessao.pessoa, tipo:sessao.tipo, token:sessao.token, status:'Recebido'});
+  const p = pessoa(sessao.pessoaId); if(p && sessao.tipo==='Fotografia do cadastro') p.foto = true;
+  logAudit('Captura móvel', 'Arquivo recebido — '+sessao.pessoa);
+  sessao = null; save(); render(); toast('Arquivo recebido e vinculado ao cadastro.', 'ok');
+}
+
+/* ================= 6. Contratos ================= */
+function viewContratos(){
+  const rows = DB.contratos.map(c=>{
+    const ocos = DB.ocorrencias.filter(o=>o.contratoId===c.id).length;
+    const faltas = DB.frequencia.filter(f=>['Falta'].includes(f.situacao) && DB.pessoas.some(p=>p.id===f.pessoaId && p.lotacao.includes(c.numero))).length;
+    return `<tr><td><b>${esc(c.numero)}</b><br><small style="color:var(--muted)">${esc(c.objeto)}</small></td>
+      <td>${esc(c.empresa)}</td><td>${brDate(c.inicio)} — ${brDate(c.fim)}</td>
+      <td>${c.ocupados}/${c.postos}${c.ocupados<c.postos?` <span class="tag t-gold">${c.postos-c.ocupados} vago(s)</span>`:''}</td>
+      <td>${esc(c.fiscal)}</td><td>${ocos}</td><td>${tagFor(c.situacao)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="fiscalizar('${c.id}')">Fiscalizar</button></td></tr>`;
+  });
+  return head('Contratos e fiscalização',
+    'Acompanhamento de equipes terceirizadas: empresa, posto, escala, ausências, substituições, atestados e ocorrências.',
+    `<button class="btn btn-ghost" onclick="abrirDoc('fiscalizacao')">Relatório de fiscalização</button>
+     <button class="btn btn-primary" onclick="formContrato()">+ Novo contrato</button>`) +
+  `<div class="card">${table(['Contrato','Empresa','Vigência','Postos','Fiscal','Ocorr.','Situação','Ações'], rows)}</div>
+  <div class="note gold" style="margin-top:16px">Eventuais glosas são apenas indicativas: o valor final depende da análise do fiscal e das cláusulas contratuais.</div>`;
+}
+function formContrato(){
+  if(!guard()) return;
+  modal('Novo contrato', `<div class="form-grid">
+    <div class="field"><label for="kNum">Número *</label><input id="kNum" placeholder="000/2026"></div>
+    <div class="field"><label for="kEmp">Empresa *</label><input id="kEmp"></div>
+    <div class="field full"><label for="kObj">Objeto</label><input id="kObj"></div>
+    <div class="field"><label for="kIni">Início</label><input id="kIni" type="date" value="${hoje()}"></div>
+    <div class="field"><label for="kFim">Fim</label><input id="kFim" type="date"></div>
+    <div class="field"><label for="kPos">Postos previstos</label><input id="kPos" type="number" min="0" value="0"></div>
+    <div class="field"><label for="kOcu">Postos ocupados</label><input id="kOcu" type="number" min="0" value="0"></div>
+    <div class="field full"><label for="kFis">Fiscal responsável</label><input id="kFis"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveContrato()">Salvar</button>`);
+}
+function saveContrato(){
+  if(!val('kNum') || !val('kEmp')){ toast('Informe número e empresa.', 'err'); return; }
+  DB.contratos.push({id:'CTR-'+String(DB.contratos.length+1).padStart(4,'0'), numero:val('kNum'), empresa:val('kEmp'),
+    objeto:val('kObj'), inicio:val('kIni'), fim:val('kFim'), postos:+val('kPos')||0, ocupados:+val('kOcu')||0,
+    fiscal:val('kFis')||DB.usuario, situacao:'Vigente'});
+  logAudit('Contratos','Inclusão do contrato '+val('kNum'));
+  save(); closeModal(); render(); toast('Contrato cadastrado.', 'ok');
+}
+function fiscalizar(id){
+  const c = DB.contratos.find(x=>x.id===id);
+  const ocos = DB.ocorrencias.filter(o=>o.contratoId===id);
+  const colabs = DB.pessoas.filter(p=>p.tipo==='Terceirizado' && p.lotacao.includes(c.numero));
+  const frqs = DB.frequencia.filter(f=>colabs.some(p=>p.id===f.pessoaId));
+  const ausencias = frqs.filter(f=>f.situacao!=='Presente');
+  modal('Fiscalização — contrato '+c.numero, `
+    <div class="grid g4" style="gap:12px;margin-bottom:14px">
+      <div class="kpi"><div class="lbl">Postos</div><div class="val">${c.ocupados}/${c.postos}</div></div>
+      <div class="kpi gold"><div class="lbl">Ausências</div><div class="val">${ausencias.length}</div></div>
+      <div class="kpi red"><div class="lbl">Ocorrências</div><div class="val">${ocos.length}</div></div>
+      <div class="kpi green"><div class="lbl">Colaboradores</div><div class="val">${colabs.length}</div></div>
+    </div>
+    <b style="font-size:13px">Ausências e substituições</b>
+    ${table(['Data','Colaborador','Situação','Justificativa'], ausencias.map(f=>`<tr><td>${brDate(f.data)}</td><td>${esc(pnome(f.pessoaId))}</td><td>${tagFor(f.situacao)}</td><td>${esc(f.just||'—')}</td></tr>`), 'Sem ausências registradas.')}
+    <b style="font-size:13px;display:block;margin-top:16px">Ocorrências vinculadas</b>
+    ${table(['Data','Tipo','Local','Situação'], ocos.map(o=>`<tr><td>${brDate(o.data)}</td><td>${esc(o.tipo)}</td><td>${esc(o.local)}</td><td>${tagFor(o.situacao)}</td></tr>`), 'Sem ocorrências vinculadas.')}
+    <div class="note gold" style="margin-top:14px">Estimativa preliminar de glosa: <b>${ausencias.length} ausência(s)</b> para análise. O valor final depende do cálculo contratual e da decisão do fiscal.</div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     <button class="btn btn-primary" onclick="closeModal();abrirDoc('fiscalizacao')">Gerar relatório</button>`, true);
+}
+
+/* ================= 7. Cartões ================= */
+function viewCartoes(){
+  const st = s => DB.cartoes.filter(c=>c.status===s).length;
+  const rows = DB.cartoes.map(c=>`<tr><td class="mono"><b>${esc(c.numero)}</b></td>
+    <td>${c.titularId?esc(pnome(c.titularId)):'<span style="color:var(--muted)">sem titular</span>'}</td>
+    <td>${tagFor(c.status)}</td><td>${brDate(c.entrega)}</td><td>${brDate(c.devolucao)}</td>
+    <td>${esc(c.motivo||'—')}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-sm" onclick="histCartao('${c.id}')">Histórico</button>
+      <button class="btn btn-ghost btn-sm" onclick="movCartao('${c.id}')">Movimentar</button></td></tr>`);
+  return head('Cartões de acesso',
+    'Ciclo de vida rastreável: entrega, devolução, perda, dano, substituição e bloqueio, com histórico por cartão.',
+    `<button class="btn btn-ghost" onclick="paramCartao()">Parâmetros</button>
+     <button class="btn btn-primary" onclick="novoCartao()">+ Cadastrar cartão</button>`) +
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi green"><div class="lbl">Disponíveis</div><div class="val">${st('Disponível')}</div></div>
+    <div class="kpi"><div class="lbl">Em uso</div><div class="val">${st('Em uso')}</div></div>
+    <div class="kpi gold"><div class="lbl">Aguardando devolução</div><div class="val">${st('Aguardando devolução')}</div></div>
+    <div class="kpi red"><div class="lbl">Bloqueados / danificados</div><div class="val">${st('Bloqueado')+st('Danificado')}</div></div>
+  </div>
+  <div class="card">${table(['Número','Titular','Status','Entrega','Devolução','Motivo','Ações'], rows)}</div>
+  <div class="note" style="margin-top:16px">Valor de substituição parametrizado: <b>${money(DB.param.valorCartao)}</b> — parâmetro editável e sempre subordinado às regras vigentes da NOVACAP. A devolução ao CFTV pode ter confirmação eletrônica após validação da TI e da DSEL.</div>`;
+}
+function paramCartao(){
+  if(!guard()) return;
+  modal('Parâmetros do módulo', `<div class="field"><label for="pVal">Valor de substituição por perda/dano (R$)</label>
+    <input id="pVal" type="number" step="0.01" min="0" value="${DB.param.valorCartao}">
+    <div class="help">Valores e limites sujeitos a mudança devem ser parametrizáveis (regra de negócio do projeto).</div></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+     <button class="btn btn-primary" onclick="DB.param.valorCartao=+val('pVal')||0;save();logAudit('Parâmetros','Valor de cartão alterado');closeModal();render();toast('Parâmetro atualizado.','ok')">Salvar</button>`);
+}
+function novoCartao(){
+  if(!guard()) return;
+  modal('Cadastrar cartão', `<div class="form-grid">
+    <div class="field"><label for="nNum">Número do cartão *</label><input id="nNum" value="${String(DB.cartoes.length+1).padStart(4,'0')}"></div>
+    <div class="field"><label for="nSt">Status inicial</label>${sel('nSt',['Disponível','Bloqueado'],'Disponível')}</div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveCartao()">Salvar</button>`);
+}
+function saveCartao(){
+  const n = val('nNum'); if(!n){ toast('Informe o número.', 'err'); return; }
+  if(DB.cartoes.some(c=>c.numero===n)){ toast('Já existe cartão com este número.', 'err'); return; }
+  DB.cartoes.push({id:'CAR-'+String(DB.cartoes.length+1).padStart(4,'0'), numero:n, titularId:'', status:val('nSt'),
+    entrega:'', devolucao:'', motivo:'', hist:[{d:hoje(), t:'Cadastro do cartão', u:DB.usuario}]});
+  logAudit('Cartões','Cadastro do cartão '+n); save(); closeModal(); render(); toast('Cartão cadastrado.', 'ok');
+}
+function movCartao(id){
+  if(!guard()) return;
+  const c = DB.cartoes.find(x=>x.id===id);
+  modal('Movimentar cartão '+c.numero, `<div class="form-grid">
+    <div class="field"><label for="mAcao">Ação</label>${sel('mAcao',['Entrega','Devolução','Perda','Dano','Substituição','Bloqueio','Desbloqueio'],'Entrega')}</div>
+    <div class="field"><label for="mData">Data</label><input id="mData" type="date" value="${hoje()}"></div>
+    <div class="field full"><label for="mTit">Titular</label><select id="mTit"><option value="">— sem titular —</option>${pessoaOptions(c.titularId)}</select></div>
+    <div class="field full"><label for="mMot">Motivo / observação</label><textarea id="mMot">${esc(c.motivo)}</textarea></div>
+    <div class="field"><label for="mBo">Ocorrência policial (quando pertinente)</label><input id="mBo" placeholder="BO-0000/0000"></div>
+    <div class="field"><label for="mPag">Comprovante de pagamento</label><input id="mPag" placeholder="${esc(money(DB.param.valorCartao))} — se aplicável"></div>
+  </div>
+  <div class="note gold">Perda ou dano registram motivo, ocorrência policial quando pertinente, comprovante quando aplicável, bloqueio e emissão de novo cartão.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="aplicaMovCartao('${id}')">Confirmar</button>`);
+}
+function aplicaMovCartao(id){
+  const c = DB.cartoes.find(x=>x.id===id);
+  const acao = val('mAcao'), data = val('mData'), tit = val('mTit'), mot = val('mMot'), bo = val('mBo'), pag = val('mPag');
+  const mapa = {'Entrega':'Em uso','Devolução':'Disponível','Perda':'Bloqueado','Dano':'Danificado','Substituição':'Em uso','Bloqueio':'Bloqueado','Desbloqueio':'Disponível'};
+  if(acao==='Entrega' && !tit){ toast('Selecione o titular para entrega.', 'err'); return; }
+  c.status = mapa[acao];
+  if(acao==='Entrega' || acao==='Substituição'){ c.titularId = tit; c.entrega = data; c.devolucao = ''; }
+  if(acao==='Devolução'){ c.devolucao = data; c.titularId = ''; }
+  c.motivo = [mot, bo?('BO: '+bo):'', pag?('Pagamento: '+pag):''].filter(Boolean).join(' · ');
+  c.hist.push({d:data, t:acao + (mot?(' — '+mot):''), u:DB.usuario});
+  if(acao==='Perda' || acao==='Dano'){
+    const livre = DB.cartoes.find(x=>x.status==='Disponível');
+    toast(livre ? `Cartão bloqueado. Sugestão de substituição: cartão ${livre.numero}.` : 'Cartão bloqueado. Não há cartão disponível em estoque.', 'ok');
+  }
+  logAudit('Cartões', `${acao} — cartão ${c.numero}`);
+  save(); closeModal(); render(); toast('Movimentação registrada no histórico.', 'ok');
+}
+function histCartao(id){
+  const c = DB.cartoes.find(x=>x.id===id);
+  modal('Histórico — cartão '+c.numero,
+    table(['Data','Evento','Usuário'], c.hist.map(h=>`<tr><td>${brDate(h.d)}</td><td>${esc(h.t)}</td><td>${esc(h.u)}</td></tr>`)),
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>`);
+}
+/* ================= 8. Estoque ================= */
+function viewEstoque(){
+  const rows = DB.estoque.map(e=>`<tr><td><b>${esc(e.item)}</b></td><td>${esc(e.tam)}</td><td>${esc(e.cor)}</td>
+    <td>${tagFor(e.condicao)}</td><td><b style="color:${e.qtd<=5?'var(--danger)':'inherit'}">${e.qtd}</b></td>
+    <td>${e.qtd<=5?'<span class="tag t-red">Crítico</span>':e.qtd<=12?'<span class="tag t-gold">Atenção</span>':'<span class="tag t-green">Regular</span>'}</td>
+    <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="movEstoque('${e.id}')">Movimentar</button></td></tr>`);
+  const movs = DB.movimentos.slice().reverse().slice(0,12).map(m=>{
+    const e = DB.estoque.find(x=>x.id===m.estoqueId) || {item:'?',tam:''};
+    const cls = m.tipo==='Entrada'||m.tipo==='Devolução' ? 't-green' : m.tipo==='Descarte' ? 't-red' : 't-blue';
+    return `<tr><td>${brDate(m.data)}</td><td>${esc(e.item)} ${esc(e.tam)}</td><td><span class="tag ${cls}">${esc(m.tipo)}</span></td>
+      <td>${m.qtd}</td><td>${esc(pnome(m.pessoaId))}</td><td>${esc(m.obs||'—')}</td></tr>`;
+  });
+  const total = DB.estoque.reduce((s,e)=>s+e.qtd,0);
+  return head('Estoque de uniformes',
+    'Controle por item, tamanho, cor, condição e saldo. Cada entrega gera movimentação e termo de recebimento.',
+    `<button class="btn btn-ghost" onclick="abrirDoc('estoque')">Relatório de estoque</button>
+     <button class="btn btn-primary" onclick="formItem()">+ Novo item</button>`) +
+  `<div class="grid g4" style="margin-bottom:16px">
+    <div class="kpi"><div class="lbl">Peças em estoque</div><div class="val">${total}</div></div>
+    <div class="kpi red"><div class="lbl">Itens críticos</div><div class="val">${DB.estoque.filter(e=>e.qtd<=5).length}</div><div class="sub">saldo igual ou inferior a 5</div></div>
+    <div class="kpi gold"><div class="lbl">Movimentações</div><div class="val">${DB.movimentos.length}</div></div>
+    <div class="kpi green"><div class="lbl">Referências cadastradas</div><div class="val">${DB.estoque.length}</div></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><div class="toolbar"><b>Saldo por referência</b><div class="right"><button class="btn btn-ghost btn-sm" onclick="exportCSV('estoque')">Exportar CSV</button></div></div>
+      ${table(['Item','Tam.','Cor','Condição','Saldo','Alerta','Ações'], rows)}</div>
+    <div class="card"><div class="toolbar"><b>Últimas movimentações</b></div>
+      ${table(['Data','Referência','Tipo','Qtd','Pessoa','Observação'], movs)}</div>
+  </div>`;
+}
+function formItem(){
+  if(!guard()) return;
+  modal('Novo item de estoque', `<div class="form-grid">
+    <div class="field"><label for="iItem">Item *</label>${sel('iItem',['Blusa','Calça','Bota','Chapéu','Boné','Meia','Luva','Colete','Capa de chuva'],'Blusa')}</div>
+    <div class="field"><label for="iTam">Tamanho</label><input id="iTam" value="M"></div>
+    <div class="field"><label for="iCor">Cor</label><input id="iCor" value="Azul"></div>
+    <div class="field"><label for="iCon">Condição</label>${sel('iCon',['Novo','Usado em bom estado','Usado para avaliação','Danificado','Descartado'],'Novo')}</div>
+    <div class="field"><label for="iQtd">Quantidade inicial</label><input id="iQtd" type="number" min="0" value="0"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveItem()">Salvar</button>`);
+}
+function saveItem(){
+  DB.estoque.push({id:'EST-'+String(DB.estoque.length+1).padStart(4,'0'), item:val('iItem'), tam:val('iTam')||'Único',
+    cor:val('iCor')||'—', condicao:val('iCon'), qtd:+val('iQtd')||0});
+  logAudit('Estoque','Inclusão de referência — '+val('iItem')); save(); closeModal(); render(); toast('Item cadastrado.', 'ok');
+}
+function movEstoque(id){
+  if(!guard()) return;
+  const e = DB.estoque.find(x=>x.id===id);
+  modal(`Movimentar — ${e.item} ${e.tam} (${e.cor})`, `<div class="form-grid">
+    <div class="field"><label for="vTipo">Tipo</label>${sel('vTipo',['Entrada','Entrega','Devolução','Descarte'],'Entrega')}</div>
+    <div class="field"><label for="vQtd">Quantidade</label><input id="vQtd" type="number" min="1" value="1"></div>
+    <div class="field full"><label for="vPes">Pessoa</label><select id="vPes"><option value="">— não aplicável —</option>${pessoaOptions('')}</select></div>
+    <div class="field full"><label for="vObs">Observação</label><input id="vObs" placeholder="Ex.: kit inicial, troca por desgaste"></div>
+  </div>
+  <div class="note">Saldo atual: <b>${e.qtd}</b>. Entregas geram termo de recebimento; devoluções atualizam o saldo e identificam itens não devolvidos.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="aplicaMovEstoque('${id}')">Confirmar</button>`);
+}
+function aplicaMovEstoque(id){
+  const e = DB.estoque.find(x=>x.id===id);
+  const tipo = val('vTipo'), q = +val('vQtd')||0, pid = val('vPes');
+  if(q<1){ toast('Quantidade inválida.', 'err'); return; }
+  if((tipo==='Entrega'||tipo==='Descarte') && q>e.qtd){ toast('Saldo insuficiente para esta movimentação.', 'err'); return; }
+  if(tipo==='Entrega' && !pid){ toast('Selecione a pessoa que recebe o material.', 'err'); return; }
+  e.qtd += (tipo==='Entrada'||tipo==='Devolução') ? q : -q;
+  DB.movimentos.push({id:'MOV-'+String(DB.movimentos.length+1).padStart(4,'0'), data:hoje(), estoqueId:id, tipo, qtd:q, pessoaId:pid, obs:val('vObs')});
+  logAudit('Estoque', `${tipo} de ${q} × ${e.item} ${e.tam}` + (pid?` — ${pnome(pid)}`:''));
+  save(); closeModal(); render();
+  toast('Movimentação registrada. Saldo atualizado para ' + e.qtd + '.', 'ok');
+  if(e.qtd<=5) toast('Atenção: saldo crítico de ' + e.item + ' ' + e.tam + '.', 'err');
+}
+
+/* ================= 9. Desligamentos ================= */
+const DES_LABEL = {comunicacao:'Comunicação registrada', sei:'Processo SEI vinculado', cartao:'Cartão recolhido',
+  uniforme:'Uniformes devolvidos', ponto:'Folha de ponto encerrada', encerramento:'Encerramento formal'};
+function pctDes(d){ const v = Object.values(d.check); return Math.round(v.filter(Boolean).length/v.length*100); }
+function viewDesligamentos(){
+  const rows = DB.desligamentos.map(d=>`<tr><td><b>${esc(pnome(d.pessoaId))}</b><br><small style="color:var(--muted)">${esc(d.id)}</small></td>
+    <td>${esc(d.origem)}</td><td>${brDate(d.data)}</td><td class="mono">${esc(d.sei||'—')}</td><td>${esc(d.motivo)}</td>
+    <td style="min-width:150px"><div class="progress" style="margin:0 0 4px"><span style="width:${pctDes(d)}%"></span></div><small style="color:var(--muted)">${pctDes(d)}% concluído</small></td>
+    <td>${tagFor(d.situacao)}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="checkDes('${d.id}')">Providências</button></td></tr>`);
+  return head('Desligamentos e SEI',
+    'Comunicações, providências, cartões, materiais e encerramento. Reeducando de outro setor: comunicação recebida via SEI; sob gestão DSEL: comunicação encaminhada à FUNAP.',
+    `<button class="btn btn-primary" onclick="abrirDesligamento()">+ Novo desligamento</button>`) +
+  `<div class="card">${table(['Pessoa','Origem','Data','Processo SEI','Motivo','Providências','Situação','Ações'], rows)}</div>`;
+}
+function abrirDesligamento(reeId){
+  if(!guard()) return;
+  const r = reeId ? DB.reeducandos.find(x=>x.id===reeId) : null;
+  modal('Registrar desligamento', `<div class="form-grid">
+    <div class="field full"><label for="dPes">Pessoa</label><select id="dPes">${pessoaOptions(r?r.pessoaId:'')}</select></div>
+    <div class="field"><label for="dOri">Origem da comunicação</label>${sel('dOri',['Gestão DSEL','Outro setor (recebida via SEI)','FUNAP'],'Gestão DSEL')}</div>
+    <div class="field"><label for="dData">Data</label><input id="dData" type="date" value="${hoje()}"></div>
+    <div class="field"><label for="dSei">Processo SEI</label><input id="dSei" placeholder="00000-00000000/0000-00"></div>
+    <div class="field"><label for="dMot">Motivo</label>${sel('dMot',['Término de contrato FUNAP','Solicitação do reeducando','Decisão administrativa','Ocorrência disciplinar','Transferência de unidade'],'Término de contrato FUNAP')}</div>
+  </div>
+  <div class="note">Ao salvar, o sistema abre o checklist de providências e sinaliza cartões e uniformes pendentes de devolução.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveDes('${reeId||''}')">Registrar</button>`);
+}
+function saveDes(reeId){
+  const pid = val('dPes'); if(!pid){ toast('Selecione a pessoa.', 'err'); return; }
+  const d = {id:'DES-'+String(DB.desligamentos.length+1).padStart(4,'0'), pessoaId:pid, origem:val('dOri'), data:val('dData'),
+    sei:val('dSei'), motivo:val('dMot'), situacao:'Em andamento',
+    check:{comunicacao:true, sei:!!val('dSei'), cartao:false, uniforme:false, ponto:false, encerramento:false}};
+  DB.desligamentos.push(d);
+  const car = DB.cartoes.find(c=>c.titularId===pid && c.status==='Em uso');
+  if(car){ car.status='Aguardando devolução'; car.motivo='Desligamento em andamento'; car.hist.push({d:d.data,t:'Solicitada devolução (desligamento)',u:DB.usuario}); }
+  if(reeId){ const r = DB.reeducandos.find(x=>x.id===reeId); if(r){ r.situacao='Desligado'; r.etapa=11; } }
+  const p = pessoa(pid); if(p) p.situacao='Desligado';
+  DB.tarefas.push({id:'TAR-'+String(DB.tarefas.length+1).padStart(4,'0'), titulo:'Concluir providências do desligamento — '+pnome(pid),
+    resp:DB.usuario, prazo:d.data, prioridade:'Alta', status:'Pendente'});
+  logAudit('Desligamentos','Abertura '+d.id+' — '+pnome(pid));
+  save(); closeModal(); renderNav(); go('desligamentos'); toast('Desligamento registrado. Providências geradas.', 'ok');
+}
+function checkDes(id){
+  const d = DB.desligamentos.find(x=>x.id===id);
+  modal('Providências — '+pnome(d.pessoaId), `
+    <div class="progress"><span style="width:${pctDes(d)}%"></span></div>
+    ${Object.keys(DES_LABEL).map(k=>`<div class="check ${d.check[k]?'done':''}">
+      <input type="checkbox" id="dc_${k}" ${d.check[k]?'checked':''} onchange="toggleDes('${id}','${k}',this.checked)">
+      <label for="dc_${k}"><b>${esc(DES_LABEL[k])}</b><div class="meta">${d.check[k]?'Concluído':'Pendente'}</div></label></div>`).join('')}
+    <div class="note ${d.situacao==='Encerrado'?'':'gold'}">${d.situacao==='Encerrado'?'Processo encerrado. Histórico preservado para auditoria.':'O encerramento formal só é concluído após todas as providências anteriores.'}</div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     <button class="btn btn-primary" onclick="closeModal();abrirDoc('desligamento','${d.pessoaId}')">Gerar comunicação</button>`);
+}
+function toggleDes(id, k, on){
+  if(!can('write')){ toast('Sem permissão de escrita.', 'err'); checkDes(id); return; }
+  const d = DB.desligamentos.find(x=>x.id===id);
+  if(k==='encerramento' && on){
+    const faltam = Object.keys(d.check).filter(x=>x!=='encerramento' && !d.check[x]);
+    if(faltam.length){ toast('Conclua as providências anteriores antes do encerramento.', 'err'); checkDes(id); return; }
+  }
+  d.check[k] = on;
+  if(k==='cartao' && on){
+    const car = DB.cartoes.find(c=>c.titularId===d.pessoaId);
+    if(car){ car.status='Disponível'; car.titularId=''; car.devolucao=hoje(); car.motivo='Devolvido no desligamento'; car.hist.push({d:hoje(),t:'Devolução no desligamento',u:DB.usuario}); }
+  }
+  d.situacao = d.check.encerramento ? 'Encerrado' : 'Em andamento';
+  if(d.situacao==='Encerrado') DB.tarefas.forEach(t=>{ if(t.titulo.includes(pnome(d.pessoaId))) t.status='Concluída'; });
+  logAudit('Desligamentos', `${d.id}: ${DES_LABEL[k]} ${on?'concluída':'reaberta'}`);
+  save(); checkDes(id); renderNav(); render();
+}
+
+/* ================= 10. Água e energia ================= */
+const CNT_LABEL = {nota:'Conta / nota fiscal', atesto:'Atesto', empenho:'Nota de empenho',
+  provisionamento:'Provisionamento', memorando:'Memorando', despacho:'Despacho'};
+function pctConta(c){ const v = Object.values(c.check); return Math.round(v.filter(Boolean).length/v.length*100); }
+function viewContas(){
+  const rows = DB.contas.map(c=>`<tr><td><b>${esc(c.ref)}</b></td><td>${esc(c.tipo)}</td><td>${esc(c.unidade)}</td>
+    <td>${money(c.valor)}</td><td class="mono">${esc(c.sei)}</td>
+    <td style="min-width:160px"><div class="progress" style="margin:0 0 4px"><span style="width:${pctConta(c)}%"></span></div><small style="color:var(--muted)">${pctConta(c)}%</small></td>
+    <td>${pctConta(c)===100?tagFor('Concluída'):tagFor('Pendente')}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="checkConta('${c.id}')">Checklist</button></td></tr>`);
+  const totalMes = DB.contas.filter(c=>c.ref==='2026-08').reduce((s,c)=>s+c.valor,0);
+  return head('Contas de água e energia',
+    'Checklist mensal de conta, atesto, empenho, provisionamento, memorando, despacho e processo SEI, com etapas concluídas e pendentes.',
+    `<button class="btn btn-primary" onclick="formConta()">+ Nova conta</button>`) +
+  `<div class="grid g3" style="margin-bottom:16px">
+    <div class="kpi"><div class="lbl">Competência 08/2026</div><div class="val">${money(totalMes)}</div><div class="sub">soma das contas lançadas</div></div>
+    <div class="kpi gold"><div class="lbl">Checklists incompletos</div><div class="val">${DB.contas.filter(c=>pctConta(c)<100).length}</div></div>
+    <div class="kpi green"><div class="lbl">Fechamentos concluídos</div><div class="val">${DB.contas.filter(c=>pctConta(c)===100).length}</div></div>
+  </div>
+  <div class="card">${table(['Competência','Tipo','Unidade','Valor','Processo SEI','Andamento','Situação','Ações'], rows)}</div>`;
+}
+function formConta(){
+  if(!guard()) return;
+  modal('Nova conta', `<div class="form-grid">
+    <div class="field"><label for="cRef">Competência (AAAA-MM)</label><input id="cRef" value="${hoje().slice(0,7)}"></div>
+    <div class="field"><label for="cTipo2">Tipo</label>${sel('cTipo2',['Energia','Água'],'Energia')}</div>
+    <div class="field"><label for="cUni">Unidade</label><input id="cUni" value="Sede DSEL"></div>
+    <div class="field"><label for="cVal">Valor (R$)</label><input id="cVal" type="number" step="0.01" min="0" value="0"></div>
+    <div class="field full"><label for="cSei">Processo SEI</label><input id="cSei" placeholder="00000-00000000/0000-00"></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveConta()">Salvar</button>`);
+}
+function saveConta(){
+  DB.contas.unshift({id:'CNT-'+String(DB.contas.length+1).padStart(4,'0'), ref:val('cRef'), tipo:val('cTipo2'),
+    unidade:val('cUni'), valor:+val('cVal')||0, sei:val('cSei'),
+    check:{nota:false, atesto:false, empenho:false, provisionamento:false, memorando:false, despacho:false}});
+  logAudit('Água e Energia','Lançamento de conta '+val('cRef')); save(); closeModal(); render(); toast('Conta lançada.', 'ok');
+}
+function checkConta(id){
+  const c = DB.contas.find(x=>x.id===id);
+  modal(`Checklist — ${c.tipo} ${c.ref}`, `
+    <div class="progress"><span style="width:${pctConta(c)}%"></span></div>
+    ${Object.keys(CNT_LABEL).map(k=>`<div class="check ${c.check[k]?'done':''}">
+      <input type="checkbox" id="cc_${k}" ${c.check[k]?'checked':''} onchange="toggleConta('${id}','${k}',this.checked)">
+      <label for="cc_${k}"><b>${esc(CNT_LABEL[k])}</b><div class="meta">${c.check[k]?'Concluído':'Pendente'}</div></label></div>`).join('')}
+    <div class="note">Valor lançado: <b>${money(c.valor)}</b> · Processo SEI: <b>${esc(c.sei||'não informado')}</b></div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     <button class="btn btn-primary" onclick="closeModal();abrirDoc('memorando')">Gerar memorando</button>`);
+}
+function toggleConta(id,k,on){
+  if(!can('write')){ toast('Sem permissão de escrita.', 'err'); checkConta(id); return; }
+  const c = DB.contas.find(x=>x.id===id); c.check[k]=on;
+  logAudit('Água e Energia', `${c.tipo} ${c.ref}: ${CNT_LABEL[k]} ${on?'concluída':'reaberta'}`);
+  save(); checkConta(id); render();
+}
+
+/* ================= 11. Tarefas ================= */
+function viewTarefas(){
+  const rows = DB.tarefas.map(t=>`<tr><td><b>${esc(t.titulo)}</b></td><td>${esc(t.resp)}</td><td>${brDate(t.prazo)}</td>
+    <td>${esc(t.prioridade)}</td><td>${tagFor(t.status)}</td>
+    <td style="white-space:nowrap">${t.status!=='Concluída'?`<button class="btn btn-ghost btn-sm" onclick="concluirTarefa('${t.id}')">Concluir</button>`:''}</td></tr>`);
+  return head('Tarefas e providências','Prazos, responsáveis, prioridade e status — alimentados pelos módulos e pelo dashboard.',
+    `<button class="btn btn-primary" onclick="formTarefa()">+ Nova tarefa</button>`) +
+  `<div class="card">${table(['Tarefa','Responsável','Prazo','Prioridade','Status','Ações'], rows)}</div>`;
+}
+function formTarefa(){
+  if(!guard()) return;
+  modal('Nova tarefa', `<div class="form-grid">
+    <div class="field full"><label for="tTit">Descrição *</label><input id="tTit"></div>
+    <div class="field"><label for="tResp">Responsável</label><input id="tResp" value="${esc(DB.usuario)}"></div>
+    <div class="field"><label for="tPra">Prazo</label><input id="tPra" type="date" value="${hoje()}"></div>
+    <div class="field"><label for="tPri">Prioridade</label>${sel('tPri',['Alta','Média','Baixa'],'Média')}</div>
+    <div class="field"><label for="tSta">Status</label>${sel('tSta',['Pendente','Em andamento'],'Pendente')}</div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveTarefa()">Salvar</button>`);
+}
+function saveTarefa(){
+  if(!val('tTit')){ toast('Descreva a tarefa.', 'err'); return; }
+  DB.tarefas.push({id:'TAR-'+String(DB.tarefas.length+1).padStart(4,'0'), titulo:val('tTit'), resp:val('tResp'),
+    prazo:val('tPra'), prioridade:val('tPri'), status:val('tSta')});
+  logAudit('Tarefas','Inclusão — '+val('tTit')); save(); closeModal(); renderNav(); render(); toast('Tarefa criada.', 'ok');
+}
+function concluirTarefa(id){
+  if(!guard()) return;
+  const t = DB.tarefas.find(x=>x.id===id); t.status='Concluída';
+  logAudit('Tarefas','Conclusão — '+t.titulo); save(); renderNav(); render(); toast('Tarefa concluída.', 'ok');
+}
+
+/* ================= 12. Ocorrências ================= */
+function viewOcorrencias(){
+  const rows = DB.ocorrencias.map(o=>`<tr><td>${brDate(o.data)}</td><td><b>${esc(o.tipo)}</b></td><td>${esc(o.local)}</td>
+    <td>${esc(o.gravidade)}</td><td>${o.contratoId?esc((DB.contratos.find(c=>c.id===o.contratoId)||{}).numero||'—'):'—'}</td>
+    <td class="mono">${esc(o.bo||'—')}</td><td>${tagFor(o.situacao)}</td>
+    <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" onclick="verOco('${o.id}')">Detalhes</button>
+    <button class="btn btn-ghost btn-sm" onclick="solicitarCftv('${o.id}')">CFTV</button></td></tr>`);
+  return head('Ocorrências',
+    'Furtos, tentativas, colisões, danos, acessos indevidos e outros eventos, com anexos e providências.',
+    `<button class="btn btn-primary" onclick="formOco()">+ Registrar ocorrência</button>`) +
+  `<div class="card">${table(['Data','Tipo','Local','Gravidade','Contrato','Ocorr. policial','Situação','Ações'], rows)}</div>`;
+}
+function formOco(){
+  if(!guard()) return;
+  modal('Registrar ocorrência', `<div class="form-grid">
+    <div class="field"><label for="oData">Data</label><input id="oData" type="date" value="${hoje()}"></div>
+    <div class="field"><label for="oTipo">Tipo</label>${sel('oTipo',['Furto','Tentativa de furto','Colisão','Dano ao patrimônio','Acidente de trabalho','Acesso indevido','Outros'],'Furto')}</div>
+    <div class="field"><label for="oLoc">Local</label><input id="oLoc"></div>
+    <div class="field"><label for="oGra">Gravidade</label>${sel('oGra',['Baixa','Média','Alta'],'Média')}</div>
+    <div class="field"><label for="oCtr">Contrato relacionado</label><select id="oCtr"><option value="">— não aplicável —</option>${DB.contratos.map(c=>`<option value="${c.id}">${esc(c.numero)} — ${esc(c.empresa)}</option>`).join('')}</select></div>
+    <div class="field"><label for="oBo">Ocorrência policial</label><input id="oBo" placeholder="BO-0000/0000"></div>
+    <div class="field full"><label for="oDesc">Descrição *</label><textarea id="oDesc"></textarea></div>
+    <div class="field full"><label for="oProv">Providências adotadas</label><textarea id="oProv"></textarea></div>
+  </div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveOco()">Registrar</button>`);
+}
+function saveOco(){
+  if(!val('oDesc')){ toast('Descreva a ocorrência.', 'err'); return; }
+  DB.ocorrencias.unshift({id:'OCO-'+String(DB.ocorrencias.length+1).padStart(4,'0'), data:val('oData'), tipo:val('oTipo'),
+    local:val('oLoc')||'—', gravidade:val('oGra'), desc:val('oDesc'), contratoId:val('oCtr'), bo:val('oBo'),
+    prov:val('oProv'), situacao:'Em análise'});
+  logAudit('Ocorrências','Registro de '+val('oTipo')); save(); closeModal(); renderNav(); render(); toast('Ocorrência registrada.', 'ok');
+}
+function verOco(id){
+  const o = DB.ocorrencias.find(x=>x.id===id);
+  const sol = DB.cftv.filter(c=>c.ocorrenciaId===id);
+  modal('Ocorrência '+o.id, `<table><tbody>
+    <tr><td>Data</td><td>${brDate(o.data)}</td></tr>
+    <tr><td>Tipo / gravidade</td><td>${esc(o.tipo)} · ${esc(o.gravidade)}</td></tr>
+    <tr><td>Local</td><td>${esc(o.local)}</td></tr>
+    <tr><td>Descrição</td><td>${esc(o.desc)}</td></tr>
+    <tr><td>Providências</td><td>${esc(o.prov||'—')}</td></tr>
+    <tr><td>Ocorrência policial</td><td>${esc(o.bo||'—')}</td></tr>
+    <tr><td>Solicitações de CFTV</td><td>${sol.length? sol.map(s=>esc(s.camera)+' ('+esc(s.situacao)+')').join('<br>') : '—'}</td></tr>
+    <tr><td>Situação</td><td>${tagFor(o.situacao)}</td></tr></tbody></table>
+    <div class="note gold" style="margin-top:14px">A análise assistida de vídeo é ferramenta de apoio e não substitui a validação humana.</div>`,
+    `<button class="btn btn-ghost" onclick="closeModal()">Fechar</button>
+     ${o.situacao==='Em análise'?`<button class="btn btn-primary" onclick="concluirOco('${id}')">Concluir análise</button>`:''}`);
+}
+function concluirOco(id){
+  if(!guard()) return;
+  const o = DB.ocorrencias.find(x=>x.id===id); o.situacao='Concluída';
+  logAudit('Ocorrências','Conclusão '+o.id); save(); closeModal(); renderNav(); render(); toast('Ocorrência concluída.', 'ok');
+}
+
+/* ================= 13. CFTV ================= */
+function viewCftv(){
+  const rows = DB.cftv.map(c=>`<tr><td>${brDate(c.data)}</td><td>${esc(c.solicitante)}</td>
+    <td>${esc(c.ocorrenciaId||'—')}</td><td>${esc(c.camera)}</td><td>${esc(c.janela)}</td>
+    <td>${esc(c.finalidade)}</td><td>${tagFor(c.situacao)}</td>
+    <td>${c.situacao==='Aguardando liberação'?`<button class="btn btn-ghost btn-sm" onclick="atenderCftv('${c.id}')">Atender</button>`:''}</td></tr>`);
+  return head('CFTV — solicitações e análise',
+    'Solicitações de imagens com finalidade declarada e acesso segregado. A futura análise assistida apoia a localização de trechos relevantes.',
+    `<button class="btn btn-primary" onclick="solicitarCftv()">+ Nova solicitação</button>`) +
+  `<div class="note ${can('cftv')?'':'gold'}" style="margin-bottom:16px">
+    ${can('cftv') ? 'Perfil com acesso ao CFTV: liberação de imagens permitida, com registro em auditoria.'
+      : 'Perfil atual sem acesso segregado ao CFTV: é possível solicitar, mas a liberação depende do perfil autorizado. Imagens de segurança recebem tratamento compatível com a LGPD.'}
+  </div>
+  <div class="card">${table(['Data','Solicitante','Ocorrência','Câmera','Janela de tempo','Finalidade','Situação','Ações'], rows)}</div>`;
+}
+function solicitarCftv(ocoId){
+  modal('Solicitar imagens de CFTV', `<div class="form-grid">
+    <div class="field"><label for="sCam">Câmera / ponto</label><input id="sCam" placeholder="CAM-00 / Local"></div>
+    <div class="field"><label for="sJan">Janela de tempo</label><input id="sJan" placeholder="31/08 08:00 — 10:00"></div>
+    <div class="field full"><label for="sOco">Ocorrência vinculada</label><select id="sOco"><option value="">— nenhuma —</option>
+      ${DB.ocorrencias.map(o=>`<option value="${o.id}" ${o.id===ocoId?'selected':''}>${esc(o.id)} — ${esc(o.tipo)} (${brDate(o.data)})</option>`).join('')}</select></div>
+    <div class="field full"><label for="sFin">Finalidade *</label><textarea id="sFin" placeholder="Motivo do acesso às imagens"></textarea></div>
+  </div>
+  <div class="note gold">O acesso ao CFTV é segregado e registrado. Informe finalidade objetiva, conforme políticas internas e LGPD.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveCftv()">Enviar solicitação</button>`);
+}
+function saveCftv(){
+  if(!val('sFin')){ toast('Informe a finalidade da solicitação.', 'err'); return; }
+  DB.cftv.unshift({id:'CFT-'+String(DB.cftv.length+1).padStart(4,'0'), data:hoje(), solicitante:DB.usuario,
+    ocorrenciaId:val('sOco'), camera:val('sCam')||'—', janela:val('sJan')||'—', finalidade:val('sFin'), situacao:'Aguardando liberação'});
+  logAudit('CFTV','Solicitação de imagens — '+val('sCam')); save(); closeModal(); renderNav(); go('cftv'); toast('Solicitação registrada e encaminhada.', 'ok');
+}
+function atenderCftv(id){
+  if(!can('cftv')){ toast('Somente perfis com acesso segregado ao CFTV podem liberar imagens.', 'err'); return; }
+  const c = DB.cftv.find(x=>x.id===id); c.situacao='Atendida';
+  logAudit('CFTV','Liberação de imagens — '+c.camera); save(); renderNav(); render(); toast('Solicitação atendida e registrada em auditoria.', 'ok');
+}
+
+/* ================= 14. Usuários e auditoria ================= */
+let tabUsr = 'usuarios';
+function viewUsuarios(){
+  const us = DB.usuarios.map(u=>`<tr><td><b>${esc(u.login)}</b><br><small style="color:var(--muted)">${esc(u.nome)}</small></td>
+    <td>${esc(u.perfil)}</td><td>${['write','cftv','audit'].filter(k=>(PERMS[u.perfil]||{})[k]).map(k=>`<span class="tag t-blue">${k==='write'?'escrita':k==='cftv'?'CFTV':'auditoria'}</span>`).join(' ')||'<span class="tag t-gray">somente leitura</span>'}</td>
+    <td>${esc(u.ultimo)}</td><td>${tagFor(u.situacao)}</td></tr>`);
+  const ad = DB.auditoria.slice(0,60).map(a=>`<tr><td class="mono">${esc(a.d)}</td><td>${esc(a.u)}</td><td>${esc(a.a)}</td><td>${esc(a.o)}</td></tr>`);
+  return head('Usuários e auditoria',
+    'Perfis, permissões por menor privilégio e registro cronológico das ações realizadas na plataforma.',
+    `<button class="btn btn-ghost" onclick="exportCSV('auditoria')">Exportar auditoria</button>`) +
+  `<div class="tabs">
+    <button class="tab ${tabUsr==='usuarios'?'active':''}" onclick="tabUsr='usuarios';render()">Usuários e perfis</button>
+    <button class="tab ${tabUsr==='auditoria'?'active':''}" onclick="tabUsr='auditoria';render()">Trilha de auditoria</button>
+    <button class="tab ${tabUsr==='seg'?'active':''}" onclick="tabUsr='seg';render()">Segurança e LGPD</button>
+  </div>` +
+  (tabUsr==='usuarios' ? `<div class="card">${table(['Usuário','Perfil','Permissões','Último acesso','Situação'], us)}</div>`
+   : tabUsr==='auditoria' ? `<div class="card">${table(['Data e hora','Usuário','Módulo','Operação'], ad)}</div>`
+   : `<div class="card card-pad"><h3>Diretrizes aplicadas</h3>
+      <ul style="font-size:13px;line-height:1.9;color:#2A3852;margin:0;padding-left:20px">
+        <li>Autenticação por usuário e perfil, com menor privilégio por módulo.</li>
+        <li>Acesso ao CFTV segregado dos demais módulos.</li>
+        <li>Todo registro relevante guarda data, usuário responsável e histórico.</li>
+        <li>Pré-visualização obrigatória antes de imprimir ou baixar documentos.</li>
+        <li>Dados pessoais e imagens tratados conforme LGPD e políticas internas.</li>
+        <li>Automação como apoio: decisões administrativas dependem de análise humana.</li>
+        <li>Integrações institucionais (SEI, CFTV, autenticação corporativa) somente após validação da TI.</li>
+      </ul>
+      <div class="note gold" style="margin-top:14px">Nesta demonstração os dados ficam apenas no navegador do usuário, sem envio a servidores externos.</div></div>`);
+}
+
+/* ================= Exportação CSV ================= */
+function exportCSV(qual){
+  let cols = [], rows = [];
+  if(qual==='pessoas'){ cols=['ID','Nome','Tipo','CPF','Matricula','Escolaridade','Lotacao','Situacao'];
+    rows = DB.pessoas.map(p=>[p.id,p.nome,p.tipo,p.cpf,p.matricula,p.escolaridade,p.lotacao,p.situacao]); }
+  if(qual==='frequencia'){ cols=['Data','Pessoa','Grupo','Situacao','Justificativa','Responsavel'];
+    rows = DB.frequencia.map(f=>[f.data,pnome(f.pessoaId),f.grupo,f.situacao,f.just,f.resp]); }
+  if(qual==='estoque'){ cols=['Item','Tamanho','Cor','Condicao','Saldo'];
+    rows = DB.estoque.map(e=>[e.item,e.tam,e.cor,e.condicao,e.qtd]); }
+  if(qual==='auditoria'){ cols=['DataHora','Usuario','Modulo','Operacao'];
+    rows = DB.auditoria.map(a=>[a.d,a.u,a.a,a.o]); }
+  const csv = [cols.join(';')].concat(rows.map(r=>r.map(v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`).join(';'))).join('\r\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `dsel_${qual}_${hoje()}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+  logAudit('Documentos','Exportação CSV — '+qual);
+  toast('Arquivo CSV gerado.', 'ok');
+}
+/* ================= 15. Central de documentos ================= */
+const DOCS = [
+  {k:'termo', t:'Termo de recebimento de uniforme', g:'Estoque'},
+  {k:'devolucao', t:'Termo de devolução de material', g:'Estoque'},
+  {k:'ponto', t:'Folha de Frequência Individual (FUNAP)', g:'Frequência'},
+  {k:'espelho', t:'Espelho consolidado de frequência', g:'Frequência'},
+  {k:'relfreq', t:'Relatório de frequência', g:'Frequência'},
+  {k:'estoque', t:'Relatório de estoque de uniformes', g:'Estoque'},
+  {k:'cartoes', t:'Relatório de cartões de acesso', g:'Cartões'},
+  {k:'ocorrencia', t:'Relatório de ocorrências', g:'Segurança'},
+  {k:'fiscalizacao', t:'Relatório de fiscalização contratual', g:'Contratos'},
+  {k:'memorando', t:'Memorando — água e energia', g:'Processos'},
+  {k:'despacho', t:'Despacho administrativo', g:'Processos'},
+  {k:'desligamento', t:'Comunicação de desligamento', g:'Processos'},
+  {k:'ficha', t:'Ficha cadastral da pessoa', g:'Pessoas'},
+  {k:'gerencial', t:'Relatório gerencial consolidado', g:'Gestão'}
+];
+let docSel = 'termo', docCtx = '';
+function viewDocumentos(){
+  const grupos = [...new Set(DOCS.map(d=>d.g))];
+  return head('Central de documentos',
+    'Qualquer módulo gera Word, Excel e PDF. A pré-visualização sempre precede a impressão ou o download.',
+    `<button class="btn btn-ghost" onclick="baixarDoc('doc')">Baixar Word</button>
+     <button class="btn btn-ghost" onclick="baixarDoc('xls')">Baixar Excel</button>
+     <button class="btn btn-gold" onclick="imprimirDoc()">Imprimir / PDF</button>`) +
+  `<div class="grid doc-grid">
+    <div class="card card-pad no-print">
+      <h3>Modelos disponíveis</h3>
+      <div class="doc-list">${grupos.map(g=>`<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:10px 0 4px">${esc(g)}</div>`+
+        DOCS.filter(d=>d.g===g).map(d=>`<div class="doc-item ${docSel===d.k?'sel':''}" onclick="docSel='${d.k}';render()"><b>${esc(d.t)}</b><small>${esc(d.g)}</small></div>`).join('')).join('')}</div>
+    </div>
+    <div class="card card-pad">
+      <div class="toolbar no-print" style="border-radius:8px;border:1px solid var(--line);margin-bottom:14px">
+        <b style="font-size:13px">Pré-visualização</b>
+        <span class="tag t-blue">${esc((DOCS.find(d=>d.k===docSel)||{}).t||'')}</span>
+        <div class="right"><button class="btn btn-ghost btn-sm" onclick="imprimirDoc()">Imprimir</button></div>
+      </div>
+      ${docSel==='ponto' ? folhaControls() : ''}
+      <div id="docPaper" class="${docSel==='ponto'?'paper-folha':''}">${docHTML(docSel, docCtx)}</div>
+      <div class="note no-print" style="margin-top:14px">Fluxo documental: registro → geração → pré-visualização → revisão → impressão/download → assinatura quando aplicável → digitalização/anexo → histórico.</div>
+    </div>
+  </div>`;
+}
+function abrirDoc(k, ctx){ docSel = k; docCtx = ctx || ''; go('documentos'); }
+function docHead(titulo, sub){
+  return `<div class="dh"><div class="org">Governo do Distrito Federal &middot; NOVACAP</div>
+    <div class="org">Divis&atilde;o de Seguran&ccedil;a e Limpeza &mdash; DSEL</div>
+    <h4>${esc(titulo)}</h4><div style="font-size:12.5px;color:#5B6B86">${esc(sub||'')}</div></div>`;
+}
+function assinaturas(a, b){
+  return `<div class="sign"><div>${esc(a)}</div><div>${esc(b)}</div></div>
+    <div class="watermark">Documento gerado pelo DSEL DIGITAL em ${esc(nowStamp())} por ${esc(DB.usuario)} — dados fictícios de demonstração.</div>`;
+}
+function tbl(cols, rows){
+  return `<table style="width:100%;border-collapse:collapse;margin-top:8px"><thead><tr>${cols.map(c=>`<th style="background:#F1F5FB;text-align:left">${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${cols.length}" style="text-align:center;color:#7C8AA3">Sem registros.</td></tr>`}</tbody></table>`;
+}
+function docHTML(k, ctx){
+  const p = ctx ? pessoa(ctx) : null;
+  const ref = new Date().toLocaleDateString('pt-BR');
+  switch(k){
+    case 'termo': {
+      const alvo = p || pessoa('PES-0003');
+      const movs = DB.movimentos.filter(m=>m.pessoaId===alvo.id && m.tipo==='Entrega');
+      return docHead('Termo de recebimento de uniforme e materiais','Referência: '+ref) +
+        `<h5>Identificação do recebedor</h5>${tbl(['Nome','CPF','Matrícula / vínculo','Lotação'],[[esc(alvo.nome),esc(alvo.cpf),esc(alvo.matricula),esc(alvo.lotacao)]])}
+        <h5>Materiais entregues</h5>${tbl(['Item','Tamanho','Cor','Condição','Qtd','Data'], movs.map(m=>{const e=DB.estoque.find(x=>x.id===m.estoqueId)||{};return [esc(e.item),esc(e.tam),esc(e.cor),esc(e.condicao),m.qtd,brDate(m.data)];}))}
+        <h5>Declaração</h5><p style="font-size:13px;text-align:justify">Declaro ter recebido os materiais acima relacionados, comprometendo-me a utilizá-los exclusivamente no exercício das atividades e a devolvê-los quando do encerramento do vínculo, nas condições de uso previstas.</p>
+        ${assinaturas('Recebedor','Responsável pela entrega — DSEL')}`;
+    }
+    case 'devolucao': {
+      const alvo = p || pessoa('PES-0007');
+      const movs = DB.movimentos.filter(m=>m.pessoaId===alvo.id && m.tipo==='Devolução');
+      const car = DB.cartoes.filter(c=>c.titularId===alvo.id || (c.motivo||'').includes('desligamento'));
+      return docHead('Termo de devolução de material e cartão','Referência: '+ref) +
+        `<h5>Identificação</h5>${tbl(['Nome','Matrícula','Lotação','Situação'],[[esc(alvo.nome),esc(alvo.matricula),esc(alvo.lotacao),esc(alvo.situacao)]])}
+        <h5>Itens devolvidos</h5>${tbl(['Item','Tamanho','Condição','Qtd','Data'], movs.map(m=>{const e=DB.estoque.find(x=>x.id===m.estoqueId)||{};return [esc(e.item),esc(e.tam),esc(e.condicao),m.qtd,brDate(m.data)];}))}
+        <h5>Cartão de acesso</h5>${tbl(['Número','Status','Entrega','Devolução','Observação'], car.map(c=>[esc(c.numero),esc(c.status),brDate(c.entrega),brDate(c.devolucao),esc(c.motivo||'—')]))}
+        ${assinaturas('Devolvente','Responsável pelo recebimento — DSEL')}`;
+    }
+    case 'ponto': {
+      if(ctx) FF.pessoaId = ctx;
+      return folhaHTML();
+    }
+    case 'espelho': {
+      const datas = [...new Set(DB.frequencia.map(f=>f.data))].sort();
+      const pessoas = [...new Set(DB.frequencia.map(f=>f.pessoaId))];
+      return docHead('Espelho consolidado de frequência','Competência: '+(datas[0]||'').slice(0,7)) +
+        tbl(['Pessoa','Grupo'].concat(datas.map(brDate)), pessoas.map(pid=>{
+          const g = (DB.frequencia.find(f=>f.pessoaId===pid)||{}).grupo || '—';
+          return [`<b>${esc(pnome(pid))}</b>`, esc(g)].concat(datas.map(d=>{
+            const f = DB.frequencia.find(x=>x.pessoaId===pid && x.data===d);
+            return f ? (f.situacao==='Presente'?'P':f.situacao==='Falta'?'F':f.situacao==='Atestado'?'A':'J') : '—';
+          }));
+        })) +
+        `<p style="font-size:12px;color:#5B6B86;margin-top:8px">Legenda: P — presente; F — falta; A — atestado; J — ausência justificada.</p>
+        ${assinaturas('Servidor responsável','Chefia imediata — DSEL')}`;
+    }
+    case 'relfreq': {
+      const grupos = ['Reeducandos','Brigada','Vigilância','Limpeza'];
+      return docHead('Relatório de frequência','Emitido em '+ref) +
+        tbl(['Grupo','Lançamentos','Presenças','Faltas','Justificadas','Índice'], grupos.map(g=>{
+          const t = DB.frequencia.filter(f=>f.grupo===g);
+          const pr = t.filter(f=>f.situacao==='Presente').length;
+          const fa = t.filter(f=>f.situacao==='Falta').length;
+          return [esc(g), t.length, pr, fa, t.length-pr-fa, (t.length?Math.round(pr/t.length*100):0)+'%'];
+        })) +
+        `<h5>Ausências detalhadas</h5>${tbl(['Data','Pessoa','Grupo','Situação','Justificativa'],
+          DB.frequencia.filter(f=>f.situacao!=='Presente').map(f=>[brDate(f.data),esc(pnome(f.pessoaId)),esc(f.grupo),esc(f.situacao),esc(f.just||'—')]))}
+        ${assinaturas('Elaborado por','De acordo — Chefia DSEL')}`;
+    }
+    case 'estoque':
+      return docHead('Relatório de estoque de uniformes','Posição em '+ref) +
+        tbl(['Item','Tamanho','Cor','Condição','Saldo','Situação'], DB.estoque.map(e=>[esc(e.item),esc(e.tam),esc(e.cor),esc(e.condicao),e.qtd, e.qtd<=5?'Crítico':e.qtd<=12?'Atenção':'Regular'])) +
+        `<h5>Movimentações do período</h5>${tbl(['Data','Referência','Tipo','Qtd','Pessoa'], DB.movimentos.map(m=>{const e=DB.estoque.find(x=>x.id===m.estoqueId)||{};return [brDate(m.data),esc(e.item+' '+e.tam),esc(m.tipo),m.qtd,esc(pnome(m.pessoaId))];}))}
+        ${assinaturas('Almoxarifado','Chefia DSEL')}`;
+    case 'cartoes':
+      return docHead('Relatório de cartões de acesso','Posição em '+ref) +
+        tbl(['Número','Titular','Status','Entrega','Devolução','Motivo'], DB.cartoes.map(c=>[esc(c.numero),esc(c.titularId?pnome(c.titularId):'—'),esc(c.status),brDate(c.entrega),brDate(c.devolucao),esc(c.motivo||'—')])) +
+        `<p style="font-size:12.5px;margin-top:10px">Valor de substituição parametrizado: <b>${esc(money(DB.param.valorCartao))}</b>, subordinado às regras vigentes da NOVACAP.</p>
+        ${assinaturas('Responsável pelo controle','CFTV / Recebimento')}`;
+    case 'ocorrencia':
+      return docHead('Relatório de ocorrências','Emitido em '+ref) +
+        tbl(['Data','Tipo','Local','Gravidade','Situação','Providências'], DB.ocorrencias.map(o=>[brDate(o.data),esc(o.tipo),esc(o.local),esc(o.gravidade),esc(o.situacao),esc(o.prov||'—')])) +
+        `<h5>Solicitações de CFTV vinculadas</h5>${tbl(['Data','Câmera','Janela','Finalidade','Situação'], DB.cftv.map(c=>[brDate(c.data),esc(c.camera),esc(c.janela),esc(c.finalidade),esc(c.situacao)]))}
+        ${assinaturas('Elaborado por','Chefia DSEL')}`;
+    case 'fiscalizacao':
+      return docHead('Relatório de fiscalização contratual','Emitido em '+ref) +
+        tbl(['Contrato','Empresa','Objeto','Postos','Vigência','Situação'], DB.contratos.map(c=>[esc(c.numero),esc(c.empresa),esc(c.objeto),c.ocupados+'/'+c.postos,brDate(c.inicio)+' — '+brDate(c.fim),esc(c.situacao)])) +
+        `<h5>Ausências e substituições registradas</h5>${tbl(['Data','Colaborador','Situação','Justificativa'],
+          DB.frequencia.filter(f=>['Vigilância','Limpeza','Brigada'].includes(f.grupo) && f.situacao!=='Presente')
+            .map(f=>[brDate(f.data),esc(pnome(f.pessoaId)),esc(f.situacao),esc(f.just||'—')]))}
+        <h5>Conclusão</h5><p style="font-size:13px;text-align:justify">Os apontamentos acima são preliminares e destinam-se a subsidiar a análise do fiscal do contrato. Eventual glosa depende de apuração específica e das cláusulas contratuais aplicáveis.</p>
+        ${assinaturas('Fiscal do contrato','Chefia DSEL')}`;
+    case 'memorando': {
+      const c = DB.contas[0] || {};
+      return docHead('Memorando','Nº 000/2026 — DSEL/NOVACAP — '+ref) +
+        `<p style="font-size:13px"><b>Ao:</b> Setor competente<br><b>Assunto:</b> Encaminhamento de conta de ${esc(c.tipo||'água/energia')} — competência ${esc(c.ref||'')}</p>
+        <p style="font-size:13px;text-align:justify">Encaminho, para as providências cabíveis, a documentação referente à conta de ${esc(c.tipo||'')} da unidade ${esc(c.unidade||'')}, no valor de ${esc(money(c.valor||0))}, vinculada ao processo SEI ${esc(c.sei||'')}, conforme checklist abaixo.</p>
+        ${tbl(['Etapa','Situação'], Object.keys(CNT_LABEL).map(k=>[esc(CNT_LABEL[k]), (c.check&&c.check[k])?'Concluída':'Pendente']))}
+        ${assinaturas('Chefe da DSEL','Recebido em ____/____/______')}`;
+    }
+    case 'despacho':
+      return docHead('Despacho administrativo','Referência: '+ref) +
+        `<p style="font-size:13px;text-align:justify">Trata-se de expediente relativo às rotinas da Divisão de Segurança e Limpeza. Considerando os registros constantes na plataforma DSEL DIGITAL e as providências já adotadas, encaminho o presente para análise e deliberação da autoridade competente.</p>
+        <h5>Pendências em aberto</h5>${tbl(['Tarefa','Responsável','Prazo','Prioridade'], DB.tarefas.filter(t=>t.status!=='Concluída').map(t=>[esc(t.titulo),esc(t.resp),brDate(t.prazo),esc(t.prioridade)]))}
+        ${assinaturas('Chefe da DSEL','Autoridade competente')}`;
+    case 'desligamento': {
+      const d = DB.desligamentos.find(x=>x.pessoaId===ctx) || DB.desligamentos[0];
+      const alvo = d ? pessoa(d.pessoaId) : null;
+      if(!d || !alvo) return docHead('Comunicação de desligamento','') + '<p>Nenhum desligamento registrado.</p>';
+      return docHead('Comunicação de desligamento','Processo SEI: '+esc(d.sei||'a informar')) +
+        `<p style="font-size:13px"><b>À:</b> ${d.origem==='Gestão DSEL'?'FUNAP — Fundação de Amparo ao Trabalhador Preso':'Unidade de origem'}<br>
+        <b>Assunto:</b> Desligamento de reeducando</p>
+        <p style="font-size:13px;text-align:justify">Comunico o desligamento de <b>${esc(alvo.nome)}</b>, matrícula ${esc(alvo.matricula)}, lotado(a) em ${esc(alvo.lotacao)}, a partir de ${brDate(d.data)}, pelo motivo: ${esc(d.motivo)}.</p>
+        <h5>Providências</h5>${tbl(['Providência','Situação'], Object.keys(DES_LABEL).map(k=>[esc(DES_LABEL[k]), d.check[k]?'Concluída':'Pendente']))}
+        ${assinaturas('Chefe da DSEL','Ciência do destinatário')}`;
+    }
+    case 'ficha': {
+      const alvo = p || DB.pessoas[0];
+      const ree = DB.reeducandos.find(r=>r.pessoaId===alvo.id);
+      return docHead('Ficha cadastral','Código: '+esc(alvo.id)) +
+        `<h5>Dados pessoais</h5>${tbl(['Campo','Informação'],[
+          ['Nome', esc(alvo.nome)],['CPF', esc(alvo.cpf||'—')],['Nascimento', brDate(alvo.nasc)],
+          ['Tipo de vínculo', esc(alvo.tipo)],['Matrícula', esc(alvo.matricula||'—')],
+          ['Escolaridade', esc(alvo.escolaridade)],['Lotação', esc(alvo.lotacao||'—')],
+          ['Telefone', esc(alvo.tel||'—')],['Situação', esc(alvo.situacao)],['Fotografia', alvo.foto?'Registrada':'Pendente']])}
+        ${ree?`<h5>Vínculo FUNAP</h5>${tbl(['Processo','Apresentação','Lotação','Jornada','Etapa do fluxo'],[[esc(ree.funap),brDate(ree.apresentacao),esc(ree.lotacao),esc(ree.jornada),esc(ETAPAS[Math.min(ree.etapa,ETAPAS.length-1)])]])}`:''}
+        ${assinaturas('Servidor responsável','Titular do cadastro')}`;
+    }
+    default: {
+      const ativos = DB.pessoas.filter(x=>x.situacao==='Ativo').length;
+      return docHead('Relatório gerencial consolidado','Posição em '+ref) +
+        `<h5>Indicadores</h5>${tbl(['Indicador','Valor'],[
+          ['Pessoas ativas', ativos],
+          ['Reeducandos ativos', DB.reeducandos.filter(r=>r.situacao==='Ativo').length],
+          ['Cartões em uso', DB.cartoes.filter(c=>c.status==='Em uso').length],
+          ['Cartões disponíveis', DB.cartoes.filter(c=>c.status==='Disponível').length],
+          ['Itens de estoque críticos', DB.estoque.filter(e=>e.qtd<=5).length],
+          ['Desligamentos em andamento', DB.desligamentos.filter(d=>d.situacao==='Em andamento').length],
+          ['Contratos vigentes', DB.contratos.filter(c=>c.situacao!=='Encerrado').length],
+          ['Ocorrências em análise', DB.ocorrencias.filter(o=>o.situacao==='Em análise').length],
+          ['Solicitações de CFTV pendentes', DB.cftv.filter(c=>c.situacao==='Aguardando liberação').length],
+          ['Tarefas em aberto', DB.tarefas.filter(t=>t.status!=='Concluída').length]])}
+        <h5>Pendências prioritárias</h5>${tbl(['Tarefa','Responsável','Prazo','Status'], DB.tarefas.filter(t=>t.status!=='Concluída').map(t=>[esc(t.titulo),esc(t.resp),brDate(t.prazo),esc(t.status)]))}
+        ${assinaturas('Elaborado por','Chefia DSEL')}`;
+    }
+  }
+}
+function imprimirDoc(){ logAudit('Documentos','Pré-visualização enviada para impressão — '+docSel); window.print(); }
+function baixarDoc(fmt){
+  const titulo = (DOCS.find(d=>d.k===docSel)||{}).t || 'Documento';
+  if(docSel==='ponto' && fmt==='xls'){ baixarFolhaCSV(); return; }
+  const corpo = document.getElementById('docPaper') ? document.getElementById('docPaper').innerHTML : docHTML(docSel, docCtx);
+  const extraCSS = docSel==='ponto' ? `
+    .folha{font-family:Arial,sans-serif;color:#000}
+    .f-org{text-align:center;font-size:9pt;text-transform:uppercase;line-height:1.35}
+    .f-setor{font-size:8pt;text-transform:uppercase;margin:6px 0 3px}
+    .f-setor .num{border:1px solid #000;padding:1px 8px;background:#FFE680;font-weight:bold;float:right}
+    .f-frame{border:1.5pt solid #000;padding:4px 5px 6px}
+    .f-title{text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;padding:2px 0 5px}
+    .f-id{font-size:8.5pt;text-transform:uppercase;line-height:1.45}
+    .f-id span{display:inline-block;vertical-align:top}
+    .f-id .c1,.f-id .d1{width:44%}
+    .f-id .c2,.f-id .d2,.f-id .c3,.f-id .d3{width:27%}
+    .f-id i{font-style:normal;font-weight:bold}
+    .f-doc{border-collapse:collapse;width:100%;margin-top:5px}
+    .f-doc td,.f-doc th{border:1px solid #000;font-size:8.5pt;padding:3px;text-align:center}
+    .f-doc tbody td{height:20px}
+    .f-doc tr.r-per th{font-size:8.5pt;font-weight:bold}
+    .f-doc tr.r-sub th{font-size:7pt;font-weight:bold}
+    .f-doc tr.nl td,.f-doc tr.fer td{background:#E6E6E6}
+    .f-doc .blk{text-align:center;font-weight:bold}
+    .f-tot{font-size:8pt;margin-top:5px}
+    .f-tot span{display:inline-block;margin-right:14px;white-space:nowrap}
+    .f-obs{font-size:8pt;margin-top:7px;text-align:justify}
+    .f-anot{margin-top:7px}
+    .f-anot .cap{font-size:7.5pt;font-weight:bold;text-transform:uppercase}
+    .f-anot .box{border:1px solid #000;height:60px}
+    .f-sign{margin-top:36px;font-size:8.5pt;text-transform:uppercase}
+    .f-sign div{display:inline-block;vertical-align:top}
+    .f-sign .s1{width:41%}
+    .f-sign .s2{width:58%}
+    .f-sign span{display:block;border-top:1px solid #000;padding-top:4px;text-align:center}
+    .f-sign .s1 span{width:63%}
+    .f-sign .s2 span{width:55%}
+    .f-foot{text-align:center;font-size:8pt;margin-top:12px;font-weight:bold}` : '';
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="utf-8">
+    <title>${esc(titulo)}</title><style>body{font-family:Georgia,serif;color:#1B2438}table{border-collapse:collapse;width:100%}
+    td,th{border:1px solid #999;padding:6px;font-family:Arial,sans-serif;font-size:11pt}h4,h5{color:#0D1C41}${extraCSS}</style></head><body>${corpo}</body></html>`;
+  const type = fmt==='xls' ? 'application/vnd.ms-excel' : 'application/msword';
+  const ext = fmt==='xls' ? 'xls' : 'doc';
+  const blob = new Blob(['\ufeff'+html], {type});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${docSel}_dsel_${hoje()}.${ext}`;
+  a.click(); URL.revokeObjectURL(a.href);
+  logAudit('Documentos', `Download ${ext.toUpperCase()} — ${titulo}`);
+  toast('Arquivo gerado após pré-visualização.', 'ok');
+}
+
+/* ================= Login / boot ================= */
+document.getElementById('loginForm').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  const u = val('lgUser') || 'servidor.dsel';
+  DB.usuario = u; DB.perfil = val('lgPerfil');
+  const reg = DB.usuarios.find(x=>x.login===u);
+  if(reg) reg.ultimo = nowStamp();
+  logAudit('Login', 'Sessão iniciada com perfil '+DB.perfil);
+  save();
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('uName').textContent = u;
+  document.getElementById('uRole').textContent = DB.perfil;
+  document.getElementById('uAvatar').textContent = initials(u.replace(/[._]/g,' '));
+  ROUTE = 'dash'; renderNav(); render();
+  toast('Bem-vindo ao DSEL DIGITAL. Perfil: '+DB.perfil, 'ok');
+});
+document.getElementById('btnLogout').addEventListener('click', function(){
+  logAudit('Logout','Sessão encerrada'); save();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+});
+const mt = document.getElementById('menuToggle');
+function ajustaMenu(){
+  const small = window.innerWidth <= 900;
+  mt.style.display = small ? 'inline-flex' : 'none';
+}
+mt.addEventListener('click', ()=>document.getElementById('sidebar').classList.toggle('open'));
+window.addEventListener('resize', ajustaMenu);
+ajustaMenu();
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+renderNav();
+/* =========================================================
+   Folha de Frequência Individual — FUNAP/DF
+   Réplica aprimorada do formulário oficial (dados fictícios)
+   ========================================================= */
+const MESES_PT = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+const DIAS_ABREV = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+const pad2 = n => String(n).padStart(2,'0');
+const ROTULO_SIT = {'Ausênte justificada':'AUSÊNCIA JUSTIFICADA','Atestado':'ATESTADO MÉDICO','Greve':'MOVIMENTO PAREDISTA','Substituição':'SUBSTITUIÇÃO DE POSTO','Falta':'FALTA NÃO JUSTIFICADA','Presente':'PRESENTE'};
+const rotSit = s => ROTULO_SIT[s] || String(s||'').toUpperCase();
+
+/* ---------- Estado da folha ---------- */
+const FF = {
+  pessoaId: 'PES-0003',
+  ano: new Date().getFullYear(),
+  mes: new Date().getMonth() + 1,
+  acesso: 'PORTÃO SUL/PEDESTRE',
+  pref: 'EURANDIR',
+  setor: 'S. CARGAS NORTE',
+  setorNum: '314',
+  contratante: 'NOVACAP',
+  cargo: 'AUXILIAR',
+  nivel: 'II',
+  lotacao: '',          // vazio = deduzido do cadastro
+  sede: 'SEDE IV',
+  manhaIni: '8:00', manhaFim: '12:00',
+  tardeIni: '13:00', tardeFim: '17:00',
+  valorDia: 62.50,
+  preencher: true,      // pré-preenche horários dos dias com presença registrada
+  mostrarSemana: false, // o modelo oficial exibe apenas o número do dia
+  anotacoes: ''
+};
+
+/* ---------- Feriados nacionais + Distrito Federal ---------- */
+function pascoa(ano){
+  const a = ano % 19, b = Math.floor(ano/100), c = ano % 100;
+  const d = Math.floor(b/4), e = b % 4, f = Math.floor((b+8)/25);
+  const g = Math.floor((b-f+1)/3), h = (19*a+b-d-g+15) % 30;
+  const i = Math.floor(c/4), k = c % 4, l = (32+2*e+2*i-h-k) % 7;
+  const m = Math.floor((a+11*h+22*l)/451);
+  const mes = Math.floor((h+l-7*m+114)/31), dia = ((h+l-7*m+114) % 31) + 1;
+  return new Date(ano, mes-1, dia);
+}
+function iso(dt){ return dt.getFullYear()+'-'+pad2(dt.getMonth()+1)+'-'+pad2(dt.getDate()); }
+function maisDias(dt, n){ const d = new Date(dt.getTime()); d.setDate(d.getDate()+n); return d; }
+function feriados(ano){
+  const p = pascoa(ano), h = {};
+  h[ano+'-01-01'] = 'Confraternização Universal';
+  h[ano+'-04-21'] = 'Tiradentes / Fundação de Brasília';
+  h[ano+'-05-01'] = 'Dia do Trabalho';
+  h[ano+'-09-07'] = 'Independência do Brasil';
+  h[ano+'-10-12'] = 'Nossa Senhora Aparecida';
+  h[ano+'-11-02'] = 'Finados';
+  h[ano+'-11-15'] = 'Proclamação da República';
+  h[ano+'-11-20'] = 'Consciência Negra';
+  h[ano+'-11-30'] = 'Dia do Evangélico (DF)';
+  h[ano+'-12-25'] = 'Natal';
+  h[iso(maisDias(p,-48))] = 'Carnaval';
+  h[iso(maisDias(p,-47))] = 'Carnaval';
+  h[iso(maisDias(p,-2))]  = 'Sexta-feira da Paixão';
+  h[iso(p)] = 'Páscoa';
+  h[iso(maisDias(p,60))] = 'Corpus Christi';
+  return h;
+}
+
+/* ---------- Sincroniza jornada e setor com o cadastro ---------- */
+function sincronizarFolha(){
+  const p = pessoa(FF.pessoaId); if(!p) return;
+  const ree = DB.reeducandos.find(r => r.pessoaId === p.id);
+  FF.lotacao = (ree && ree.lotacao) || p.lotacao || FF.lotacao;
+  FF.cargo = FF.cargo || 'AUXILIAR';
+  if(ree){
+    const m = String(ree.jornada||'').match(/(\d{1,2}:\d{2}).*?(\d{1,2}:\d{2})/);
+    if(m){ FF.manhaIni = m[1]; FF.tardeFim = m[2]; }
+  }
+}
+
+/* Rótulo da lotação no formato do modelo oficial (setor/divisão + órgão) */
+function lotacaoOficial(){
+  const base = String(FF.lotacao || '').toUpperCase().replace(/\s*\/\s*/g, '/');
+  if(!base) return 'DISEV/DEMAP/DA/NOVACAP';
+  return /NOVACAP/.test(base) ? base : base + '/NOVACAP';
+}
+
+/* ---------- Cálculo dos totais ---------- */
+function folhaDados(){
+  const p = pessoa(FF.pessoaId) || DB.pessoas[0];
+  const ym = FF.ano + '-' + pad2(FF.mes);
+  const fer = feriados(FF.ano);
+  const ultimo = new Date(FF.ano, FF.mes, 0).getDate();
+  const regs = DB.frequencia.filter(f => f.pessoaId === (p ? p.id : '') && String(f.data).slice(0,7) === ym);
+  const ree = DB.reeducandos.find(r => r.pessoaId === (p ? p.id : '')) || null;
+  const linhas = [];
+  for(let d = 1; d <= ultimo; d++){
+    const data = ym + '-' + pad2(d);
+    const dow = new Date(FF.ano, FF.mes - 1, d).getDay();
+    const reg = regs.find(r => r.data === data) || null;
+    let tipo = 'util';
+    if(dow === 0) tipo = 'domingo';
+    else if(dow === 6) tipo = 'sabado';
+    else if(fer[data]) tipo = 'feriado';
+    linhas.push({d, data, dow, tipo, feriado: fer[data] || '', reg});
+  }
+  const uteis = linhas.filter(l => l.tipo === 'util').length;
+  const trab = linhas.filter(l => l.tipo === 'util' && l.reg && l.reg.situacao === 'Presente').length;
+  const just = linhas.filter(l => l.tipo === 'util' && l.reg && ['Ausênte justificada','Atestado','Greve','Substituição'].indexOf(l.reg.situacao) >= 0).length;
+  const naoJust = linhas.filter(l => l.tipo === 'util' && l.reg && l.reg.situacao === 'Falta').length;
+  const semReg = uteis - trab - just - naoJust;
+  return {p, ree, ym, linhas, uteis, trab, just, naoJust, semReg,
+    remunerados: trab + just,
+    desconto: naoJust * Number(FF.valorDia || 0),
+    registros: regs.length};
+}
+
+/* ---------- Controles (fora da área impressa) ---------- */
+function folhaControls(){
+  const pes = DB.pessoas.map(x => `<option value="${x.id}" ${x.id===FF.pessoaId?'selected':''}>${esc(x.nome)} — ${esc(x.tipo)}</option>`).join('');
+  const meses = MESES_PT.map((m,i) => `<option value="${i+1}" ${i+1===FF.mes?'selected':''}>${m}</option>`).join('');
+  const anos = [FF.ano-1, FF.ano, FF.ano+1].map(a => `<option value="${a}" ${a===FF.ano?'selected':''}>${a}</option>`).join('');
+  return `<div class="toolbar no-print" style="border:1px solid var(--line);border-radius:8px;margin-bottom:14px;flex-wrap:wrap">
+    <label style="font-size:12px;color:var(--muted)">Pessoa</label>
+    <select onchange="FF.pessoaId=this.value;sincronizarFolha();render()" style="min-width:200px">${pes}</select>
+    <label style="font-size:12px;color:var(--muted)">Mês</label>
+    <select onchange="FF.mes=+this.value;render()">${meses}</select>
+    <select onchange="FF.ano=+this.value;render()">${anos}</select>
+    <label style="font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px">
+      <input type="checkbox" ${FF.preencher?'checked':''} onchange="FF.preencher=this.checked;render()"> Pré-preencher horários
+    </label>
+    <div class="right" style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="formFolha()">Cabeçalho e parâmetros</button>
+      <button class="btn btn-ghost btn-sm" onclick="baixarFolhaCSV()">Exportar Excel (CSV)</button>
+    </div>
+  </div>`;
+}
+function formFolha(){
+  modal('Cabeçalho e parâmetros da folha', `<div class="form-grid">
+    <div class="field"><label for="ffAce">Acesso</label><input id="ffAce" value="${esc(FF.acesso)}"></div>
+    <div class="field"><label for="ffPrf">Pref.</label><input id="ffPrf" value="${esc(FF.pref)}"></div>
+    <div class="field"><label for="ffSet">Setor</label><input id="ffSet" value="${esc(FF.setor)}"></div>
+    <div class="field"><label for="ffSnu">Nº do setor (caixa em destaque)</label><input id="ffSnu" value="${esc(FF.setorNum)}"></div>
+    <div class="field"><label for="ffCon">Contratante</label><input id="ffCon" value="${esc(FF.contratante)}"></div>
+    <div class="field"><label for="ffCar">Cargo</label><input id="ffCar" value="${esc(FF.cargo)}"></div>
+    <div class="field"><label for="ffNiv">Nível do setor</label><input id="ffNiv" value="${esc(FF.nivel)}"></div>
+    <div class="field"><label for="ffLot">Lotação</label><input id="ffLot" value="${esc(FF.lotacao)}" placeholder="Deixe em branco para usar o cadastro"></div>
+    <div class="field"><label for="ffSed">Sede</label><input id="ffSed" value="${esc(FF.sede)}"></div>
+    <div class="field"><label for="ffMi">Manhã — entrada</label><input id="ffMi" value="${esc(FF.manhaIni)}" placeholder="8:00"></div>
+    <div class="field"><label for="ffMf">Manhã — saída</label><input id="ffMf" value="${esc(FF.manhaFim)}" placeholder="12:00"></div>
+    <div class="field"><label for="ffTi">Tarde — entrada</label><input id="ffTi" value="${esc(FF.tardeIni)}" placeholder="13:00"></div>
+    <div class="field"><label for="ffTf">Tarde — saída</label><input id="ffTf" value="${esc(FF.tardeFim)}" placeholder="17:00"></div>
+    <div class="field"><label for="ffVd">Valor do vale / diária (R$)</label><input id="ffVd" type="number" step="0.01" value="${esc(FF.valorDia)}"></div>
+    <div class="field full"><label for="ffAn">Anotações do executor / chefia imediata</label><textarea id="ffAn">${esc(FF.anotacoes)}</textarea></div>
+  </div>
+  <div class="note">Os totais são calculados automaticamente a partir dos lançamentos do módulo Frequência e do calendário de feriados nacionais e do Distrito Federal. O horário exato de entrada e saída continua sendo preenchido e assinado manualmente pelo reeducando, conforme a observação impressa na folha.</div>`,
+  `<button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFolha()">Aplicar</button>`);
+}
+function salvarFolha(){
+  FF.contratante = val('ffCon') || FF.contratante;
+  FF.acesso = val('ffAce'); FF.pref = val('ffPrf'); FF.setor = val('ffSet'); FF.setorNum = val('ffSnu');
+  FF.cargo = val('ffCar');
+  FF.nivel = val('ffNiv'); FF.lotacao = val('ffLot'); FF.sede = val('ffSed');
+  FF.manhaIni = val('ffMi'); FF.manhaFim = val('ffMf');
+  FF.tardeIni = val('ffTi'); FF.tardeFim = val('ffTf');
+  FF.valorDia = Number(val('ffVd') || 0);
+  FF.anotacoes = val('ffAn');
+  logAudit('Documentos', 'Parâmetros da Folha de Frequência Individual atualizados');
+  closeModal(); render(); toast('Folha atualizada.', 'ok');
+}
+
+/* ---------- Brasão do Distrito Federal (imagem oficial embutida) ---------- */
+function brasaoDF(w){ return brasaoImg(w || 38, 'crest-img'); }
+
+/* ---------- Documento ---------- */
+function folhaHTML(){
+  const D = folhaDados();
+  const p = D.p || {};
+  const brasao = brasaoDF(52);
+  const hIn = FF.preencher ? FF.manhaIni : '';
+  const hOut = FF.preencher ? FF.manhaFim : '';
+  const tIn = FF.preencher ? FF.tardeIni : '';
+  const tOut = FF.preencher ? FF.tardeFim : '';
+
+  const linhas = D.linhas.map(l => {
+    const rot = `<td class="dia">${l.d}${FF.mostrarSemana?`<small>${DIAS_ABREV[l.dow]}</small>`:''}</td>`;
+    if(l.tipo === 'sabado' || l.tipo === 'domingo'){
+      return `<tr class="nl">${rot}<td colspan="8" class="blk">${l.tipo === 'sabado' ? 'SÁBADO' : 'DOMINGO'}</td></tr>`;
+    }
+    if(l.tipo === 'feriado'){
+      return `<tr class="nl fer">${rot}<td colspan="8" class="blk">FERIADO — ${esc(l.feriado)}</td></tr>`;
+    }
+    const sit = l.reg ? l.reg.situacao : '';
+    if(sit === 'Falta'){
+      return `<tr class="falta">${rot}<td colspan="8" class="blk">FALTA NÃO JUSTIFICADA</td></tr>`;
+    }
+    if(sit && sit !== 'Presente'){
+      return `<tr class="justif">${rot}<td colspan="8" class="blk">${esc(rotSit(sit))}${l.reg.just?` — ${esc(l.reg.just)}`:''}</td></tr>`;
+    }
+    const marca = sit === 'Presente' ? '' : ' vazio';
+    const hr = sit === 'Presente' ? [hIn,hOut,tIn,tOut] : ['','','',''];
+    return `<tr class="util${marca}">${rot}
+      <td class="hr">${esc(hr[0])}</td><td class="as"></td><td class="hr">${esc(hr[1])}</td><td class="as"></td>
+      <td class="hr">${esc(hr[2])}</td><td class="as"></td><td class="hr">${esc(hr[3])}</td><td class="as"></td></tr>`;
+  }).join('');
+
+  return `<div class="folha">
+  <div class="f-top">
+    <div class="f-crest">${brasao}</div>
+    <div class="f-org">
+      <div>GOVERNO DO DISTRITO FEDERAL</div>
+      <div>SECRETARIA DE ESTADO DE JUSTIÇA, DIREITOS HUMANOS E CIDADANIA</div>
+      <div>FUNDAÇÃO DE AMPARO AO TRABALHADOR PRESO - FUNAP/DF</div>
+    </div>
+  </div>
+  <div class="f-setor">
+    <span class="lbl">SETOR: NIVEL ${esc(FF.nivel)}</span>
+    <span class="num">${esc(FF.setorNum)}</span>
+  </div>
+  <div class="f-frame">
+  <div class="f-title">FOLHA DE FREQUÊNCIA INDIVIDUAL</div>
+  <div class="f-id">
+    <span class="c1"><i>CONTRATANTE:</i> ${esc(FF.contratante)}</span>
+    <span class="c2"><i>REF:</i> ${MESES_PT[FF.mes-1]} DE ${FF.ano}</span>
+  </div>
+  <div class="f-id">
+    <span class="c1"><i>NOME:</i> ${esc((p.nome || '').toUpperCase())}</span>
+    <span class="c2"><i>CARGO:</i> ${esc(FF.cargo)}</span>
+    <span class="c3"><i>PREF.</i> ${esc(FF.pref)}</span>
+  </div>
+  <div class="f-id">
+    <span class="d1">${esc(FF.acesso)}</span>
+    <span class="d2"><i>LOTAÇÃO:</i> ${esc(lotacaoOficial())}</span>
+    <span class="d3">${esc(FF.sede)}</span>
+  </div>
+  <table class="f-doc">
+    <colgroup><col class="c-dia"><col class="c-hr"><col class="c-as"><col class="c-hr"><col class="c-as"><col class="c-hr"><col class="c-as"><col class="c-hr"><col class="c-as"></colgroup>
+    <thead>
+      <tr class="r-per">
+        <th rowspan="2" class="dia">DIA</th>
+        <th colspan="4">MANHÃ ${esc(FF.manhaIni)} às ${esc(FF.manhaFim)}</th>
+        <th colspan="4">TARDE ${esc(FF.tardeIni)} às ${esc(FF.tardeFim)}</th>
+      </tr>
+      <tr class="r-sub">
+        <th>ENTRADA</th><th>ASSINATURA</th><th>SAIDA</th><th>ASSINATURA</th>
+        <th>ENTRADA</th><th>ASSINATURA</th><th>SAIDA</th><th>ASSINATURA</th>
+      </tr>
+    </thead>
+    <tbody>${linhas}</tbody>
+  </table>
+  <div class="f-tot">
+    <span>Dias Trabalhados. <b>${D.trab}</b></span>
+    <span>Dias Remunerados. <b>${D.remunerados}</b></span>
+    <span>Faltas Justificadas. <b>${D.just}</b></span>
+    <span>Faltas Não Justificadas. <b>${D.naoJust}</b></span>
+    <span>Vales a Descontar. <b>${D.naoJust}</b></span>
+  </div>
+  <div class="f-obs">OBS.: Em cumprimento às recomendações da Vara de Execuções Penais/TJDFT, MPDFT e SESIPE/SSP, o reeducando deverá preencher manualmente o horário exato de entrada e de saída, ao assinar a folha de frequência.</div>
+  <div class="f-anot">
+    <div class="cap">ANOTAÇÕES DO EXECUTOR/CHEFIA IMEDIATA</div>
+    <div class="box">${esc(FF.anotacoes)}</div>
+  </div>
+  <div class="f-sign">
+    <div class="s1"><span>CHEFIA IMEDIATA</span></div>
+    <div class="s2"><span>EXECUTOR DO CONTRATO</span></div>
+  </div>
+  </div>
+  <div class="f-foot">BRASÍLIA - PATRIMÔNIO CULTURAL DA HUMANIDADE</div>
+</div>`;
+}
+
+/* ---------- Exportação em planilha ---------- */
+function baixarFolhaCSV(){
+  const D = folhaDados();
+  const p = D.p || {};
+  const L = [];
+  L.push(['FOLHA DE FREQUÊNCIA INDIVIDUAL — FUNAP/DF']);
+  L.push(['Acesso', FF.acesso, 'Setor nível', FF.nivel, 'Nº do setor', FF.setorNum]);
+  L.push(['Contratante', FF.contratante, 'Ref.', MESES_PT[FF.mes-1] + ' DE ' + FF.ano]);
+  L.push(['Nome', p.nome || '', 'Cargo', FF.cargo, 'Pref.', FF.pref]);
+  L.push(['Nível do setor', FF.nivel, 'Lotação', lotacaoOficial(), 'Sede', FF.sede]);
+  L.push(['Jornada', `MANHÃ ${FF.manhaIni} às ${FF.manhaFim}`, '', `TARDE ${FF.tardeIni} às ${FF.tardeFim}`]);
+  L.push([]);
+  L.push(['Dia','Semana','Situação','Manhã entrada','Manhã saída','Tarde entrada','Tarde saída','Observação']);
+  D.linhas.forEach(l => {
+    const sem = DIAS_ABREV[l.dow];
+    if(l.tipo === 'sabado' || l.tipo === 'domingo'){ L.push([l.d, sem, l.tipo === 'sabado' ? 'SÁBADO' : 'DOMINGO','','','','','']); return; }
+    if(l.tipo === 'feriado'){ L.push([l.d, sem, 'FERIADO','','','','', l.feriado]); return; }
+    const sit = l.reg ? l.reg.situacao : 'Sem lançamento';
+    const pres = sit === 'Presente';
+    L.push([l.d, sem, sit,
+      pres ? FF.manhaIni : '', pres ? FF.manhaFim : '',
+      pres ? FF.tardeIni : '', pres ? FF.tardeFim : '',
+      l.reg && l.reg.just ? l.reg.just : '']);
+  });
+  L.push([]);
+  L.push(['Dias úteis', D.uteis]);
+  L.push(['Dias trabalhados', D.trab]);
+  L.push(['Dias remunerados', D.remunerados]);
+  L.push(['Faltas justificadas', D.just]);
+  L.push(['Faltas não justificadas', D.naoJust]);
+  L.push(['Vales a descontar', D.naoJust]);
+  L.push(['Valor a descontar', money(D.desconto)]);
+  const csv = L.map(r => r.map(c => `"${String(c == null ? '' : c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `folha_frequencia_${(p.matricula||'pessoa')}_${FF.ano}-${pad2(FF.mes)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+  logAudit('Documentos', `Exportação da folha de frequência — ${p.nome} (${pad2(FF.mes)}/${FF.ano})`);
+  toast('Planilha gerada após pré-visualização.', 'ok');
+}
+
+/* ---------- Atalho a partir do módulo Frequência ---------- */
+function abrirFolha(pid, ym){
+  if(pid) FF.pessoaId = pid;
+  if(ym){ FF.ano = +String(ym).slice(0,4); FF.mes = +String(ym).slice(5,7); }
+  sincronizarFolha();
+  abrirDoc('ponto', FF.pessoaId);
+}
+
+/* ---------- Aplica o brasão oficial nos marcadores estáticos ---------- */
+document.querySelectorAll('img[data-brasao]').forEach(function(el){ el.src = BRASAO_DF_URI; });
+
+</script>
+</body>
+</html>
